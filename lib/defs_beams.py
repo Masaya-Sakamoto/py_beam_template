@@ -13,7 +13,5 @@ def def_basic_lin_beams(theta_max:int=25, phi_0:int=0, step:int=1) -> list[dict[
     """
     origin = {"id": 1, "theta": 0, "phi": phi_0}
     beams1 = def_lin_beams(id_start=2, theta_start=1, theta_end=theta_max, phi_const=phi_0, step=step)
-    print(f"Beams1: {beams1}")
     beams2 = def_lin_beams(id_start=len(beams1) + 2, theta_start=1, theta_end=theta_max, phi_const=phi_0 + 180, step=step)
-    print(f"Beams2: {beams2}")
     return [origin,] + beams1 + beams2

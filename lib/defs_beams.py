@@ -1,4 +1,4 @@
-def def_lin_beams(id_start:int, theta_start:int, theta_end:int, phi_const:int, include_end:bool, step:int=1) -> list[dict[int, int, int]]:
+def def_lin_beams(id_start:int, theta_start:int, theta_end:int, phi_const:int, include_end:bool, step:int=1) -> list[dict[str, int]]:
     """
     Generate a list of beam IDs based on a linear sequence.
 

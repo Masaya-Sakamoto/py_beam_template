@@ -1,4 +1,4 @@
-def def_lin_beamsweeping(origin: dict[int, int, int], beams: list[dict[int, int, int]]) -> list[dict[int, int, int]]:
+def def_lin_beamsweeping(origin: dict[str, int], beams: list[dict[str, int]]) -> list[dict[str, int]]:
     """
     Generate a list of basic linear beams with sweeping angles.
 
@@ -6,8 +6,8 @@ def def_lin_beamsweeping(origin: dict[int, int, int], beams: list[dict[int, int,
     print(f"type(origin)={type(origin)}, type(beams)={type(beams)}")
     return [origin,] + beams + beams[-1::-1]  # Reverse the last beam to create a sweeping effect
 
-def def_basic_lin_beamsweeping(origin: dict[int, int, int], beams_list: list[list[dict[int, int, int]]]) -> list[dict[int, int, int]]:
-    result:dict[int, int, int] = []
+def def_basic_lin_beamsweeping(origin: dict[str, int], beams_list: list[list[dict[str, int]]]) -> list[dict[str, int]]:
+    result:dict[str, int] = []
     for beams in beams_list:
         result.extend(def_lin_beamsweeping(origin, beams))
     return result

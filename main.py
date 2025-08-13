@@ -57,10 +57,13 @@ def main():
     """
     # 1. beam_listsを作成
     origin = {"id": 1, "theta": 0, "phi":45}
-    beams_size = 25
+    theta_min = 1
+    theta_max = 25
+    theta_step = 1
+    beams_size = (theta_max - theta_min) // theta_step + 1
     beams_lists = [
-        def_lin_beams(id_start=2, theta_start=1, theta_end=25, phi_const=45, include_end=True, step=1),
-        def_lin_beams(id_start=beams_size+2, theta_start=1, theta_end=25, phi_const=45+90, include_end=True, step=1),
+        def_lin_beams(id_start=2, theta_start=1, theta_end=25, phi_const=0, include_end=True, step=1),
+        def_lin_beams(id_start=beams_size+2, theta_start=1, theta_end=25, phi_const=180, include_end=True, step=1),
     ]
     
     # 2. beam_listsからbs_seqを作成
@@ -82,7 +85,7 @@ def main():
     while True:
         try:
             input ("Press Enter to start beam sweeping or Ctrl+C to exit...")
-            sequence_ops(beam_seq_table, xapp_beam_management_bin_path)
+            sequence_ops(beam_seq_table, xapp_beam_management_bin_path, interval=5)
         except KeyboardInterrupt:
             print("中断されました。")
             kill_softmodem(proc)

@@ -1,5 +1,5 @@
 from lib.defs_beams import def_lin_beams
-from lib.make_beam_csvfile import create_beam_table, create_beam_table_csv
+from lib.make_beam_file import create_beam_table, create_beam_table_csv
 
 def test_create_beam_table():
     """

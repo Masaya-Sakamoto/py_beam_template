@@ -1,6 +1,6 @@
 from lib.defs_beams import def_lin_beams
 from lib.defs_beam_sweeping import def_basic_lin_beamsweeping
-from lib.defs_beamsweep_op import sequence_ops
+from lib.defs_beam_sweep_op import sequence_ops
 
 retcode = 0
 def init_testcase(testcase_retcode:int):

@@ -1,7 +1,7 @@
-from lib.make_beam_csvfile import create_beam_table_csv, create_beam_table
+from lib.make_beam_file import create_beam_table_csv, create_beam_table
 from lib.defs_beams import def_lin_beams
-from lib.defs_beam_sweeping import def_lin_beamsweeping
-from lib.defs_beamsweep_op import sequence_ops
+from lib.defs_beam_sweeping import def_lin_beam_sweeping
+from lib.defs_beam_sweep_op import sequence_ops
 import subprocess
 from getpass import getpass
 import sys
@@ -15,22 +15,35 @@ FLEXRIC_DIR = 'openair2/E2AP/flexric'
 FLEXRIC_BUILD_DIR = 'build'
 XAPP_BEAMMANAGEMENT_BIN = 'oaibox_xapp_beam_management'
 xapp_beam_management_bin_path = f'{HOME_DIR}/{OAI_DIR}/{FLEXRIC_DIR}/{FLEXRIC_BUILD_DIR}/examples/xApp/oaibox/{XAPP_BEAMMANAGEMENT_BIN}'
-local_beamtable_csv_location = './CustomBatchBeams.csv'
+local_beam_table_csv_location = './CustomBatchBeams.csv'
 du_beam_csv_location = f'{HOME_DIR}/{OAI_DIR}/radio/USRP/setup/'
 beam_switch_interval = 20
 
 def run_softmodem() -> subprocess.Popen|None:
-    privil_password = (getpass() + '\n').encode()
+    privileged_password = getpass()
+    privileged_password if privileged_password else ""
     command = ['sudo', '-S', f'{HOME_DIR}/{OAI_DIR}/{EXECUTABLES_DIR}/{SOFTMODEM_BIN}', '...some_args']
     try:
-        proc = subprocess.Popen(command, input=privil_password, check=True, text=True)
+        # proc = subprocess.Popen(command, input=privileged_password, check=True, text=True)
+        proc = subprocess.Popen(command, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+        if proc.stdin is not None:
+            try:
+                proc.stdin.write(privileged_password)
+                proc.stdin.close()
+            except Exception as e:
+                print(f"Error occurred while writing to stdin: {e}")
+        else:
+            proc.kill()  # stdinがNoneの場合はプロセスを終了
+            raise RuntimeError("Process was not initialized properly")
         return proc
     except FileNotFoundError:
         print(f"エラー: コマンド '{command[0]}' が見つかりません。")
         sys.exit(1)
         return None
 
-def kill_softmodem(proc: subprocess.Popen):
+def kill_softmodem(proc: subprocess.Popen|None) -> None:
+    if proc is None:
+        return
     if proc.poll() is None:
         # 1. 穏便な終了を試みる
         proc.terminate()
@@ -54,7 +67,7 @@ def main():
     4. beam_tableからcsvを作成
     5. csvを再配置
     6. softmodem起動
-    7. beamsweepingを実行
+    7. beam-sweepingを実行
     """
     # 1. beam_listsを作成
     origin = {"id": 1, "theta": 0, "phi":0}
@@ -69,29 +82,29 @@ def main():
     ]
     
     # 2. beam_listsからbs_seqを作成
-    # beam_seq_table = def_basic_lin_beamsweeping(origin, beams_lists)
-    beam_seq_tables = [def_lin_beamsweeping(origin, beams) for beams in beams_lists[:1]]
+    # beam_seq_table = def_basic_lin_beams_weeping(origin, beams_lists)
+    beam_seq_tables = [def_lin_beam_sweeping(origin, beams) for beams in beams_lists[:1]]
 
     # 3. beam_listsからbeam_tableを作成
     beam_table = create_beam_table([origin,] + beams_lists[0] + beams_lists[1])
 
     # 4. beam_tableからcsvを作成
-    create_beam_table_csv(beam_table, local_beamtable_csv_location)
+    create_beam_table_csv(beam_table, local_beam_table_csv_location)
 
     # 5. csvを再配置
-    shutil.copy(local_beamtable_csv_location, du_beam_csv_location)
+    shutil.copy(local_beam_table_csv_location, du_beam_csv_location)
 
     # 6. softmodem起動
-    # proc = run_softmodem()
+    proc = run_softmodem()
 
-    # 7. beamsweepingを実行
+    # 7. beam-sweepingを実行
     while True:
         try:
             input ("Press Enter to start beam sweeping or Ctrl+C to exit...")
             sequence_ops(beam_seq_tables, xapp_beam_management_bin_path, interval=beam_switch_interval)
         except KeyboardInterrupt:
             print("中断されました。")
-            # kill_softmodem(proc)
+            kill_softmodem(proc)
             break
 
 if __name__ == "__main__":

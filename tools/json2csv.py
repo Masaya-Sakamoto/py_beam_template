@@ -50,12 +50,6 @@ def json2csv(json_file_path:str, csv_file_path:str, encoding:str='utf-8'):
     df = json_dict2df(json2dicts(json_file_path, encoding))
     df.to_csv(csv_file_path, encoding=encoding, index=False)
 
-# json_files = glob(f'{JSON_DIR}/*.json')
-
-# logging.debug("json files list:")
-# for i, json_file in enumerate(json_files):
-#     logging.debug(f"id{i}  name: {json_file.split('/')[-1]}")
-
 def parse_args(args: list[str]):
     parser = ArgumentParser(description="Convert JSON files to CSV format.")
     parser.add_argument("json_dir", help="Path to the input JSON directory.")

@@ -13,7 +13,7 @@ def json2dicts(json_file_path:str, encoding:str='utf-8') -> list[dict[str, int|f
 def set_unique_list(new_items:list[str]|str, store_list:list[str]) -> list[str]:
     if type(new_items) != list and type(new_items[0]) == str:
         raise TypeError('new_items must be list[str]')
-    if type(new_items) != list:
+    if type(new_items) == str:
         new_item = new_items
         if new_item not in store_list:
                 store_list.append(new_item)
@@ -43,9 +43,7 @@ def extract_unique_keys_from_json(json_dict_list:list[dict[str, int|float|str]])
 
 def json_dict2df(json_dict_list:list[dict[str, int|float|str]]) -> pd.DataFrame:
     keys = extract_unique_keys_from_json(json_dict_list)
-    df = pd.DataFrame(columns=keys)
-    for json_dict in json_dict_list:
-        df.loc[len(df)] = json_dict
+    df = pd.DataFrame.from_records(json_dict_list, columns=keys)
     return df
 
 def json2csv(json_file_path:str, csv_file_path:str, encoding:str='utf-8'):

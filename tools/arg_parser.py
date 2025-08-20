@@ -4,26 +4,6 @@ from typing import Any
 from math import pi as PI
 
 def parse_args() -> argparse.Namespace:
-    """
-    for replace these constant values:
-        HOME_DIR = '/home/user' .. default behavior: import from environment value: $HOME 
-        OAI_DIR = 'openairinterface5g' .. default
-        EXECUTABLES_DIR = 'cmake_targets/ran_build/build' .. default
-        SOFTMODEM_BIN = 'nr-softmodem' .. default
-        FLEXRIC_DIR = 'openair2/E2AP/flexric' .. default
-        FLEXRIC_BUILD_DIR = 'build' .. default
-        XAPP_BEAMMANAGEMENT_BIN = 'oaibox_xapp_beam_management' .. default
-        xapp_beam_management_bin_path = f'{HOME_DIR}/{OAI_DIR}/{FLEXRIC_DIR}/{FLEXRIC_BUILD_DIR}/examples/xApp/oaibox/{XAPP_BEAMMANAGEMENT_BIN}'
-        local_beam_table_csv_location = './CustomBatchBeams.csv'
-        du_beam_csv_location = f'{HOME_DIR}/{OAI_DIR}/radio/USRP/setup/'
-        beam_switch_interval = 20
-        theta_min = 1
-        theta_max = 25
-        theta_step = 1
-        pattern_rotation = 270
-        beam_pattern = 'linear'/'fibonacci'/'circular'(not implemented)
-        pattern_rotation = 0
-    """
     parser = argparse.ArgumentParser(description="Beam management script")
     parser.add_argument('--home-dir', type=str, default=getenv('HOME', '/home/user'), help='Home directory path')
     parser.add_argument('--oai-dir', type=str, default='openairinterface5g', help='OpenAirInterface directory')
@@ -33,12 +13,11 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument('--flexric-build-dir', type=str, default='build', help='FlexRIC build directory')
     parser.add_argument('--xapp-beam-management-bin', type=str, default='oaibox_xapp_beam_management', help='XApp Beam Management binary name')
     parser.add_argument('--local-beam-table-csv-location', type=str, default='./CustomBatchBeams.csv', help='Local Beam Table CSV location')
-    # parser.add_argument('--du-beam-csv-location', type=str, default=f'{HOME_DIR}/{OAI_DIR}/radio/USRP/setup/', help='DU Beam CSV location')
     parser.add_argument('--beam-switch-interval', type=int, default=20, help='Beam switch interval')
     parser.add_argument('--theta-min', type=int, default=1, help='Minimum theta value in degree')
     parser.add_argument('--theta-max', type=int, default=25, help='Maximum theta value in degree')
     parser.add_argument('--theta-step', type=int, default=1, help='Theta step value in degree')
-    parser.add_argument('--pattern-rotation', type=int, default=270, help='Pattern rotation value in degree')
+    parser.add_argument('--pattern-rotation', type=int, default=0, help='Pattern rotation value in degree')
     parser.add_argument('--center-angle-theta', type=float, default=None, help='Center angle theta value in degree')
     parser.add_argument('--center-angle-phi', type=float, default=None, help='Center angle phi value in degree')
     parser.add_argument('--beam-pattern', type=str, choices=['linear', 'fibonacci', 'circular'], default='linear', help='Beam pattern type')

@@ -11,3 +11,4 @@ wheels/
 
 # tests temporary files
 tests/*.csv
+*.csv

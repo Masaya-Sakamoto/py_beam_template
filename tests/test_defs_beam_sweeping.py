@@ -9,7 +9,7 @@ def test_def_lin_beamsweeping():
       - Check the first, peak and last elements to ensure they are the same.
     """
     origin = {"id": 1, "theta": 0, "phi": 90}
-    beams = def_lin_beams(id_start=2, theta_start=1, theta_end=25, phi_const=90, include_end=True, step=1)
+    beams = def_lin_beams(id_start=2, theta_start=1, theta_end=25, pattern_rotation=90, include_end=True, step=1)
     beamsweeping = def_lin_beamsweeping(origin, beams)
     assert len(beamsweeping) == len(beams) * 2 + 1  # Original beams + reversed beams + origin
     assert beamsweeping[0] == origin
@@ -30,8 +30,8 @@ def test_def_basic_lin_beamsweeping():
     # beam1: [(2,  1,  45), ..., (26, 25, 45)]
     # beam2: [(27, 1, 135), ..., (51, )]
     beams_list = [
-        def_lin_beams(id_start=2, theta_start=1, theta_end=25, phi_const=45, include_end=True, step=1),
-        def_lin_beams(id_start=beams_size+2, theta_start=1, theta_end=25, phi_const=45+90, include_end=True, step=1),
+        def_lin_beams(id_start=2, theta_start=1, theta_end=25, pattern_rotation=45, include_end=True, step=1),
+        def_lin_beams(id_start=beams_size+2, theta_start=1, theta_end=25, pattern_rotation=45+90, include_end=True, step=1),
     ]
     beamsweeping = def_basic_lin_beamsweeping(origin, beams_list)
     assert len(beamsweeping) == (beams_size*2+1)*2

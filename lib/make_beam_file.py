@@ -1,5 +1,3 @@
-from lib.defs_beams import def_lin_beams
-
 def create_beam_str(beam_entry: dict[str, int], beam_mode:str):
     if not (beam_mode == 'TX' or beam_mode == 'RX'):
         raise ValueError("beam_type must be either 'TX' or 'RX'")

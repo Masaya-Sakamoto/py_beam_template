@@ -16,7 +16,7 @@ def test_create_beam_table():
         id_start=2,
         theta_start=1,
         theta_end=25,
-        phi_const=0,
+        pattern_rotation=0,
         include_end=True,
         step=1
     )
@@ -24,7 +24,7 @@ def test_create_beam_table():
         id_start=27,
         theta_start=1,
         theta_end=25,
-        phi_const=180,
+        pattern_rotation=180,
         include_end=True,
         step=1
     )
@@ -60,7 +60,7 @@ def test_create_beam_table_csv():
         id_start=2,
         theta_start=1,
         theta_end=25,
-        phi_const=0,
+        pattern_rotation=0,
         include_end=True,
         step=1
     )
@@ -68,7 +68,7 @@ def test_create_beam_table_csv():
         id_start=27,
         theta_start=1,
         theta_end=25,
-        phi_const=180,
+        pattern_rotation=180,
         include_end=True,
         step=1
     )

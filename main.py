@@ -1,23 +1,25 @@
 from lib.make_beam_file import create_beam_table_csv, create_beam_table
-from lib.defs_beams import def_lin_beams
+from lib.defs_beams import def_lin_beams, def_basic_fibonacci_beams
 from lib.defs_beam_sweeping import def_lin_beam_sweeping
 from lib.defs_beam_sweep_op import sequence_ops
+from tools.arg_parser import arg_parser
 import subprocess
 from getpass import getpass
 import sys
 import shutil
+from typing import Any
 
-HOME_DIR = '/home/user'
-OAI_DIR = 'openairinterface5g'
-EXECUTABLES_DIR = 'cmake_targets/ran_build/build'
-SOFTMODEM_BIN = 'nr-softmodem'
-FLEXRIC_DIR = 'openair2/E2AP/flexric'
-FLEXRIC_BUILD_DIR = 'build'
-XAPP_BEAMMANAGEMENT_BIN = 'oaibox_xapp_beam_management'
-xapp_beam_management_bin_path = f'{HOME_DIR}/{OAI_DIR}/{FLEXRIC_DIR}/{FLEXRIC_BUILD_DIR}/examples/xApp/oaibox/{XAPP_BEAMMANAGEMENT_BIN}'
-local_beam_table_csv_location = './CustomBatchBeams.csv'
-du_beam_csv_location = f'{HOME_DIR}/{OAI_DIR}/radio/USRP/setup/'
-beam_switch_interval = 20
+# HOME_DIR = '/home/user'
+# OAI_DIR = 'openairinterface5g'
+# EXECUTABLES_DIR = 'cmake_targets/ran_build/build'
+# SOFTMODEM_BIN = 'nr-softmodem'
+# FLEXRIC_DIR = 'openair2/E2AP/flexric'
+# FLEXRIC_BUILD_DIR = 'build'
+# XAPP_BEAMMANAGEMENT_BIN = 'oaibox_xapp_beam_management'
+# xapp_beam_management_bin_path = f'{HOME_DIR}/{OAI_DIR}/{FLEXRIC_DIR}/{FLEXRIC_BUILD_DIR}/examples/xApp/oaibox/{XAPP_BEAMMANAGEMENT_BIN}'
+# local_beam_table_csv_location = './CustomBatchBeams.csv'
+# du_beam_csv_location = f'{HOME_DIR}/{OAI_DIR}/radio/USRP/setup/'
+# beam_switch_interval = 20
 
 def run_softmodem() -> subprocess.Popen|None:
     privileged_password = getpass()
@@ -59,7 +61,9 @@ def kill_softmodem(proc: subprocess.Popen|None) -> None:
     else:
         pass  # 既に終了している場合は何もしない
 
-def main():
+
+
+def main(args):
     """
     1. beam_listsを作成 list[list[dict[str, int]]]
     2. beam_listsからbs_seqを作成
@@ -69,21 +73,35 @@ def main():
     6. softmodem起動
     7. beam-sweepingを実行
     """
-    # 1. beam_listsを作成
-    origin = {"id": 1, "theta": 0, "phi":0}
-    theta_min = 1
-    theta_max = 25
-    theta_step = 1
-    phi_const = 270
-    beams_size = (theta_max - theta_min) // theta_step + 1
-    beams_lists = [
-        def_lin_beams(id_start=2, theta_start=1, theta_end=25, phi_const=phi_const, include_end=True, step=1),
-        def_lin_beams(id_start=beams_size+2, theta_start=1, theta_end=25, phi_const=(phi_const+180)%360, include_end=True, step=1),
-    ]
+    if args['beam_pattern'] == "linear":
+        # 1. beam_listsを作成
+        origin = {"id": 1, "theta": 0, "phi":0}
+        theta_min = args['theta_min']
+        theta_max = args['theta_max']
+        theta_step = args['theta_step']
+        pattern_rotation = args['pattern_rotation']
+        beams_size = (theta_max - theta_min) // theta_step + 1
+        beams_lists = [
+            def_lin_beams(id_start=2, theta_start=1, theta_end=25, pattern_rotation=pattern_rotation, include_end=True, step=1),
+            def_lin_beams(id_start=beams_size+2, theta_start=1, theta_end=25, pattern_rotation=(pattern_rotation+180)%360, include_end=True, step=1),
+        ]
+
+        # 2. beam_listsからbs_seqを作成
+        # beam_seq_table = def_basic_lin_beams_weeping(origin, beams_lists)
+        beam_seq_tables = [def_lin_beam_sweeping(origin, beams) for beams in beams_lists[:1]]
+    elif args['beam_pattern'] == "fibonacci":
+        beams_lists = [def_basic_fibonacci_beams(
+            N = 64,
+            delta=0.0,
+            theta_max=args['theta_max'],
+            pattern_rotation=args['pattern_rotation'],
+        )]
+    else:
+        raise ValueError(f"Unsupported beam pattern: {args['beam_pattern']}")
     
-    # 2. beam_listsからbs_seqを作成
-    # beam_seq_table = def_basic_lin_beams_weeping(origin, beams_lists)
-    beam_seq_tables = [def_lin_beam_sweeping(origin, beams) for beams in beams_lists[:1]]
+    
+    if args['beam_pattern'] == "linear":
+        
 
     # 3. beam_listsからbeam_tableを作成
     beam_table = create_beam_table([origin,] + beams_lists[0] + beams_lists[1])
@@ -108,4 +126,5 @@ def main():
             break
 
 if __name__ == "__main__":
-    main()
+    args = arg_parser()
+    main(args)

@@ -4,6 +4,7 @@ from enum import Enum, auto
 dB_t = int
 
 class BeamPattern(Enum):
+    UNDEFINED = auto()
     CONST = auto()
     LINEAR = auto()
     FIBONACCI = auto()
@@ -51,8 +52,8 @@ class config_file_t(TypedDict):
     du_beam_table_csv_location: str
     beam_control_program_json: str 
     beam_pattern: str
-    theta_min: int
-    theta_max: int
+    theta_min_d: int
+    theta_max_d: int
     pattern_rotation: int
 
 class config_t(TypedDict):
@@ -68,6 +69,8 @@ class config_t(TypedDict):
     du_beam_table_csv_location: str
     beam_control_program_json: str # beam_control_program_t
     beam_pattern: BeamPattern
+    theta_max_d: int
+    theta_min_d: int
     theta_min: float
     theta_max: float
     pattern_rotation: float

@@ -32,13 +32,14 @@ def main(conf: config_t, program: list[beam_control_program_t]):
     """
     # beam_tableの作成
     beam_table: list[beam_t] = []
-    if conf['beam_pattern'] == BeamPattern.LINEAR:
+    beam_pattern = conf['beam_pattern']
+    if beam_pattern == BeamPattern.LINEAR:
         pass
-    elif conf['beam_pattern'] == BeamPattern.FIBONACCI:
+    elif beam_pattern == BeamPattern.FIBONACCI:
         pass
-    elif conf['beam_pattern'] == BeamPattern.CIRCULAR:
+    elif beam_pattern == BeamPattern.CIRCULAR:
         pass
-    elif conf['beam_pattern'] == BeamPattern.CUSTOM:
+    elif beam_pattern == BeamPattern.CUSTOM:
         pass
     else:
         raise ValueError(f"Unsupported beam pattern: {conf['beam_pattern']}")

@@ -39,9 +39,11 @@ def verify_conf(config_f: config_file_t) -> config_t:
         'local_beam_table_csv_location': config_f['local_beam_table_csv_location'],
         'du_beam_table_csv_location': config_f['du_beam_table_csv_location'],
         'beam_control_program_json': config_f['beam_control_program_json'],
-        'beam_pattern': -1,
-        'theta_min': config_f['theta_min']*PI/180,
-        'theta_max': config_f['theta_max']*PI/180,
+        'beam_pattern': BeamPattern.UNDEFINED,
+        'theta_min_d': config_f['theta_min_d'],
+        'theta_max_d': config_f['theta_max_d'],
+        'theta_min': config_f['theta_min_d']*PI/180,
+        'theta_max': config_f['theta_max_d']*PI/180,
         'pattern_rotation': config_f['pattern_rotation']*PI/180,
     }
     # xapp_beam_management_bin_path

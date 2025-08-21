@@ -1,5 +1,4 @@
 import math
-
 from pytypes.type_beam import beam_t
 
 
@@ -66,7 +65,30 @@ def __mod_theta_phi(
         # not implemented yet
     return (theta, phi)
 
-def __phyllotaxis_point_on_hemisphere(N:int, delta:float, theta_max:float, pattern_rotation:float, is_int_val:bool) -> tuple[map[float|int], map[float|int]]:
+# FIXME: まだ単位円盤から変換する実装はしていない
+def __linear_point_on_hemisphere(
+        theta_start_d:int,
+        theta_end_d:int,
+        theta_step_d:int,
+        pattern_rotation:float,
+        center_angle_theta:float,
+        center_angle_phi:float,
+        is_int_val:bool
+    ) -> tuple[map[float|int], map[float|int]]:
+    step_vector = (theta_end_d - theta_start_d) // abs(theta_end_d - theta_start_d) * theta_step_d
+    theta = map(lambda t: t * math.pi / 180, range(theta_start_d, theta_end_d+step_vector, step_vector))
+    phi = map(lambda p: p, (pattern_rotation for _ in range(theta_start_d, theta_end_d+step_vector, step_vector)))
+    theta, phi = __mod_theta_phi(theta, phi, is_int_val=is_int_val)
+    return (theta, phi)
+
+def __phyllotaxis_point_on_hemisphere(
+        N:int, 
+        delta:float, 
+        theta_max:float, 
+        pattern_rotation:float,
+        center_angle_theta:float,
+        center_angle_phi:float,
+        is_int_val:bool) -> tuple[map[float|int], map[float|int]]:
     """
     1. phyllotaxis点を単位円盤に生成する ... __phyllotaxis_points
     2. それを当面積写像で半球にマッピングする
@@ -80,7 +102,26 @@ def __phyllotaxis_point_on_hemisphere(N:int, delta:float, theta_max:float, patte
     theta, phi = __mod_theta_phi(theta, phi, theta_max=theta_max, pattern_rotation=pattern_rotation, is_int_val=is_int_val)
     return (theta, phi)
 
-def def_basic_fibonacci_beams(N:int, delta:float, theta_max:float, pattern_rotation:float) -> list[dict[str, int]]:
-    theta, phi = __phyllotaxis_point_on_hemisphere(N, delta, theta_max, pattern_rotation=pattern_rotation, is_int_val=True)
+def def_basic_linear_beams(
+        theta_start_d:int,
+        theta_end_d:int,
+        theta_step_d:int,
+        pattern_rotation:float,
+        center_angle_theta:float,
+        center_angle_phi:float,
+        is_int_val:bool
+    ) -> list[dict[str, int]]:
+    theta, phi =  __linear_point_on_hemisphere(theta_start_d, theta_end_d, theta_step_d, pattern_rotation, center_angle_theta, center_angle_phi, is_int_val)
+    return [{"id": i, "theta": int(t), "phi": int(p)} for i, (t, p) in enumerate(zip(theta, phi))]
+
+def def_basic_fibonacci_beams(
+        N:int,
+        delta:float,
+        theta_max:float,
+        pattern_rotation:float,
+        center_angle_theta:float,
+        center_angle_phi:float
+    ) -> list[dict[str, int]]:
+    theta, phi = __phyllotaxis_point_on_hemisphere(N, delta, theta_max, pattern_rotation=pattern_rotation, center_angle_theta=center_angle_theta, center_angle_phi=center_angle_phi, is_int_val=True)
     # 型ヒント用: float(int) -> int -- int(t), int(p)
     return [{"id": i, "theta": int(t), "phi": int(p)} for i, (t, p) in enumerate(zip(theta, phi))]

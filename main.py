@@ -98,8 +98,7 @@ def main(args):
             step=theta_step))
 
         # 2. beam_listsからbs_seqを作成
-        # beam_seq_table = def_basic_lin_beams_weeping(origin, beams_lists)
-        beam_seq_tables = [def_lin_beam_sweeping(origin, beams) for beams in beams_lists]
+        
         # 3. beam_listsからbeam_tableを作成
         beam_table = create_beam_table([origin,] + beams_lists[0] + beams_lists[1])
     elif args['beam_pattern'] == "fibonacci":
@@ -114,8 +113,10 @@ def main(args):
     else:
         raise ValueError(f"Unsupported beam pattern: {args['beam_pattern']}")
     
-    
     if args['beam_pattern'] == "linear":
+        # beam_seq_table = def_basic_lin_beams_weeping(origin, beams_lists)
+        # beam_seq_tables = [def_lin_beam_sweeping(origin, beams) for beams in beams_lists]
+        # TODO: beam_seq_tablesと実行部分をidで参照するように変更する
         
 
     

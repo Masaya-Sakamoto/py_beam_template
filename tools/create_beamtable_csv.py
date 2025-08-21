@@ -1,4 +1,4 @@
-from lib.make_beam_file import create_beam_table_csv, create_beam_table
+from lib.make_beam_file import create_beam_table_csv, create_beam_table_csv_data
 from lib.defs_beams import def_lin_beams
 
 def main():
@@ -20,7 +20,7 @@ def main():
         step=1
     )
     beams = [origin,] + beams1 + beams2
-    beam_table_str_lists = create_beam_table(beams)
+    beam_table_str_lists = create_beam_table_csv_data(beams)
     create_beam_table_csv(beam_table_str_lists, 'CustomBatchBeams.csv')
 
 

@@ -1,9 +1,11 @@
-def create_beam_str(beam_entry: dict[str, int], beam_mode:str):
+from pytypes.type_beam import beam_t, beam_str_t
+
+def create_beam_str(beam_entry: beam_t, beam_mode:str) -> str:
     if not (beam_mode == 'TX' or beam_mode == 'RX'):
         raise ValueError("beam_type must be either 'TX' or 'RX'")
     return f"{beam_mode},{beam_entry['id']},0,0,{beam_entry['theta']},{beam_entry['phi']},,,,"
 
-def create_beam_table(beams:list[dict[str, int]]) -> list[dict[str,str]]:
+def create_beam_table_csv_data(beams:list[beam_t]) -> list[beam_str_t]:
     """
     [
       {
@@ -25,7 +27,7 @@ def create_beam_table(beams:list[dict[str, int]]) -> list[dict[str,str]]:
         })
     return beam_table
 
-def create_beam_table_csv(beam_table_str_lists:list[dict[str,str]], filename:str):
+def create_beam_table_csv(beam_table_str_lists:list[beam_str_t], filename:str):
     """
     Create a CSV file from the beam table string lists.
     """

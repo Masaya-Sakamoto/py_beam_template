@@ -1,6 +1,7 @@
 import subprocess
 import time
 from datetime import datetime
+from pytypes.type_beam import beam_sweeping_t
 
 def oai_xapp_beam_management_handler(txBeamId:int, rxBeamId:int, program_path:str) -> bool:
     """
@@ -21,17 +22,16 @@ def oai_xapp_beam_management_handler(txBeamId:int, rxBeamId:int, program_path:st
         print("Command not found")
         return False
 
-def sequence_ops(beam_sweep_tables: list[list[dict[str, int]]], program_path:str, interval:int=5) -> bool:
+def sequence_ops(beam_sweep_tables: list[beam_sweeping_t], program_path:str) -> bool:
     """
     beam_sweep_table: beam sweep sequenceテーブル {"id", "theta", "phi"}
     oai_xapp_beam_management_handlerをbeam_sweep_tableに基づいて実行する.
     """
-    for beam_sweep_table in beam_sweep_tables:
-        for beam in beam_sweep_table:
-            txBeamId = beam["id"]
-            rxBeamId = beam["id"]
-            print(f"Executing beam management for BeamId: {txBeamId}, Theta: {beam['theta']}, Phi: {beam['phi']} at {datetime.now()}")
-            if not oai_xapp_beam_management_handler(txBeamId, rxBeamId, program_path):
-                return False
-            time.sleep(interval)
+    for beam in beam_sweep_tables:
+        txBeamId = beam["id"]
+        rxBeamId = beam["id"]
+        print(f"Executing beam management for BeamId: {txBeamId}, Theta: {beam['theta']}, Phi: {beam['phi']} at {datetime.now()}")
+        if not oai_xapp_beam_management_handler(txBeamId, rxBeamId, program_path):
+            return False
+        time.sleep(beam['duration'])
     return True

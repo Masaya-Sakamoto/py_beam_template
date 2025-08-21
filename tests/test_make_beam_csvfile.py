@@ -1,5 +1,5 @@
 from lib.defs_beams import def_lin_beams
-from lib.make_beam_file import create_beam_table, create_beam_table_csv
+from lib.make_beam_file import create_beam_table_csv_data, create_beam_table_csv
 
 def test_create_beam_table():
     """
@@ -29,7 +29,7 @@ def test_create_beam_table():
         step=1
     )
     beams = [origin,] + beams1 + beams2
-    beam_table_str_lists = create_beam_table(beams)
+    beam_table_str_lists = create_beam_table_csv_data(beams)
     assert len(beam_table_str_lists) == len(beams)
     for i, beam_table_str_dict in enumerate(beam_table_str_lists):
         TX_row_str_list = beam_table_str_dict['TX'].split(',')
@@ -73,7 +73,7 @@ def test_create_beam_table_csv():
         step=1
     )
     beams = [origin,] + beams1 + beams2
-    beam_table_str_lists = create_beam_table(beams)
+    beam_table_str_lists = create_beam_table_csv_data(beams)
     
     # Assuming the filename is 'test_beams.csv'
     filename = 'tests/test_beams.csv'

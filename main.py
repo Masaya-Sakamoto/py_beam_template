@@ -1,4 +1,4 @@
-from lib.make_beam_file import create_beam_table_csv, create_beam_table
+from lib.make_beam_file import create_beam_table_csv, create_beam_table_csv_data
 from lib.defs_beams import def_lin_beams, def_basic_fibonacci_beams
 from lib.defs_beam_sweeping import def_lin_beam_sweeping
 from lib.defs_beam_sweep_op import sequence_ops
@@ -100,7 +100,7 @@ def main(args):
         # 2. beam_listsからbs_seqを作成
         
         # 3. beam_listsからbeam_tableを作成
-        beam_table = create_beam_table([origin,] + beams_lists[0] + beams_lists[1])
+        beam_table = create_beam_table_csv_data([origin,] + beams_lists[0] + beams_lists[1])
     elif args['beam_pattern'] == "fibonacci":
         beams_lists.append(def_basic_fibonacci_beams(
             N = 64,
@@ -108,7 +108,7 @@ def main(args):
             theta_max=args['theta_max'],
             pattern_rotation=args['pattern_rotation'],
         ))
-        beam_table = create_beam_table(beams_lists[0])
+        beam_table = create_beam_table_csv_data(beams_lists[0])
 
     else:
         raise ValueError(f"Unsupported beam pattern: {args['beam_pattern']}")

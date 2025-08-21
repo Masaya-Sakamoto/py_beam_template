@@ -14,7 +14,7 @@ def def_basic_lin_beam_sweeping(origin: dict[str, int], beams_list: list[list[di
         result.extend(def_lin_beam_sweeping(origin, beams))
     return result
 
-def search_beam(beam_table:list[beam_t], beam_id:int) -> tuple[beam_t|None, int|None]:
+def __search_beam(beam_table:list[beam_t], beam_id:int) -> tuple[beam_t|None, int|None]:
     selected_beam = None
     selected_idx = None
     for _i, _beam in enumerate(beam_table):
@@ -24,9 +24,8 @@ def search_beam(beam_table:list[beam_t], beam_id:int) -> tuple[beam_t|None, int|
             break
     return selected_beam, selected_idx
 
-def write_const_program(const_index:int, reduction:bool, duration:int) -> list[sweep_program_t]:
-    return [
-        {
+def write_const_program(const_index:int, reduction:bool, duration:int) -> sweep_program_t:
+    return {
             'start_id': const_index,
             'end_id': const_index,
             'step': -1,
@@ -34,13 +33,11 @@ def write_const_program(const_index:int, reduction:bool, duration:int) -> list[s
             'iters': -1,
             'reduction': reduction,
             'duration': duration
-        }
-    ]
+    }
 
-def write_lin_sweep_program(start_index:int, end_index:int, step:int, reduction:bool, duration:int) -> list[sweep_program_t]:
+def write_lin_sweep_program(start_index:int, end_index:int, step:int, reduction:bool, duration:int) -> sweep_program_t:
     # Generate the linear sweep program
-    return [
-        {
+    return {
             'start_id': start_index,
             'end_id': end_index,
             'step': step,
@@ -48,11 +45,10 @@ def write_lin_sweep_program(start_index:int, end_index:int, step:int, reduction:
             'iters': 1,
             'reduction': reduction,
             'duration': duration
-        }
-    ]
+    }
 
-def write_random_sweep_program(start_index:int, end_index:int, step:int, reduction:bool, duration:int, iterations:int) -> list[sweep_program_t]:
-    return [{
+def write_random_sweep_program(start_index:int, end_index:int, step:int, reduction:bool, duration:int, iterations:int) -> sweep_program_t:
+    return {
         'start_id': start_index,
         'end_id': end_index,
         'step': step,
@@ -60,7 +56,7 @@ def write_random_sweep_program(start_index:int, end_index:int, step:int, reducti
         'iters': iterations,
         'reduction': reduction,
         'duration': duration
-    }]
+    }
 
 def def_beam_sweeping(beam_table:list[beam_t], sweep_program_lst:list[sweep_program_t], origin_id:int=1) -> list[beam_sweeping_t]:
     """
@@ -120,7 +116,7 @@ def def_beam_sweeping(beam_table:list[beam_t], sweep_program_lst:list[sweep_prog
                 beam_sweeping[-1]['id'] == start_id
             ):
                 continue
-            selected_beam, _idx = search_beam(beam_table, start_id)
+            selected_beam, _idx = __search_beam(beam_table, start_id)
             if selected_beam is None:
                 raise ValueError(f"Beam ID {start_id} not found in beam table.")
             beam_sweeping.append({
@@ -142,7 +138,7 @@ def def_beam_sweeping(beam_table:list[beam_t], sweep_program_lst:list[sweep_prog
                         beam_sweeping[-1]['id'] == beam_id
                     ):
                         continue
-                    selected_beam, _idx = search_beam(beam_table, beam_id)
+                    selected_beam, _idx = __search_beam(beam_table, beam_id)
                     if selected_beam is None:
                         raise ValueError(f"Beam ID {beam_id} not found in beam table.")
                     beam_sweeping.append({
@@ -157,8 +153,8 @@ def def_beam_sweeping(beam_table:list[beam_t], sweep_program_lst:list[sweep_prog
             import random
             for _ in range(iters):
                 # Get the start and end beams
-                _garbage, start_idx = search_beam(beam_table, start_id)
-                _garbage, end_idx = search_beam(beam_table, end_id)
+                _garbage, start_idx = __search_beam(beam_table, start_id)
+                _garbage, end_idx = __search_beam(beam_table, end_id)
                 if start_idx is None:
                     raise ValueError(f"Beam ID {start_id} not found in beam table.")
                 if end_idx is None:

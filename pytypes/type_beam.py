@@ -23,3 +23,7 @@ class beam_sweeping_t(TypedDict):
     theta: int
     phi: int
     duration: int
+
+class beam_str_t(TypedDict):
+    TX: str
+    RX: str

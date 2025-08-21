@@ -1,4 +1,4 @@
-from pytypes.type_beam import sweep_program_t, beam_t, beam_sweeping_t
+from pytypes.type_beam import beam_control_program_t, beam_t, beam_sweeping_t
 
 def def_lin_beam_sweeping(origin: dict[str, int], beams: list[dict[str, int]]) -> list[dict[str, int]]:
     """
@@ -24,7 +24,7 @@ def __search_beam(beam_table:list[beam_t], beam_id:int) -> tuple[beam_t|None, in
             break
     return selected_beam, selected_idx
 
-def write_const_program(const_index:int, reduction:bool, duration:int) -> sweep_program_t:
+def write_const_program(const_index:int, reduction:bool, duration:int) -> beam_control_program_t:
     return {
             'start_id': const_index,
             'end_id': const_index,
@@ -35,7 +35,7 @@ def write_const_program(const_index:int, reduction:bool, duration:int) -> sweep_
             'duration': duration
     }
 
-def write_lin_sweep_program(start_index:int, end_index:int, step:int, reduction:bool, duration:int) -> sweep_program_t:
+def write_lin_sweep_program(start_index:int, end_index:int, step:int, reduction:bool, duration:int) -> beam_control_program_t:
     # Generate the linear sweep program
     return {
             'start_id': start_index,
@@ -47,7 +47,7 @@ def write_lin_sweep_program(start_index:int, end_index:int, step:int, reduction:
             'duration': duration
     }
 
-def write_random_sweep_program(start_index:int, end_index:int, step:int, reduction:bool, duration:int, iterations:int) -> sweep_program_t:
+def write_random_sweep_program(start_index:int, end_index:int, step:int, reduction:bool, duration:int, iterations:int) -> beam_control_program_t:
     return {
         'start_id': start_index,
         'end_id': end_index,
@@ -58,7 +58,7 @@ def write_random_sweep_program(start_index:int, end_index:int, step:int, reducti
         'duration': duration
     }
 
-def def_beam_sweeping(beam_table:list[beam_t], sweep_program_lst:list[sweep_program_t], origin_id:int=1) -> list[beam_sweeping_t]:
+def def_beam_sweeping(beam_table:list[beam_t], sweep_program_lst:list[beam_control_program_t], origin_id:int=1) -> list[beam_sweeping_t]:
     """
     input: 
         [
@@ -68,7 +68,7 @@ def def_beam_sweeping(beam_table:list[beam_t], sweep_program_lst:list[sweep_prog
         ],  -- beam table
         [
             # initial state -- method #0
-            {'start_id':  1, 'end_id':  1, 'step': -1, 'method': 0, 'iters': -1, 'reduction': 0, 'duration': 10}
+            {'start_id':  1, 'end_id':  1, 'step': -1, 'method': 0, 'iters': -1, 'reduction': 0, 'duration': 10},
 
             # motion stop -- method #0 -- 1
             {'start_id':  1, 'end_id':  1, 'step': -1, 'method': 0, 'iters':  1, 'reduction': 1, 'duration': 10},

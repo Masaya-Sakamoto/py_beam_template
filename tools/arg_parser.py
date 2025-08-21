@@ -21,7 +21,6 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument('--center-angle-theta', type=float, default=None, help='Center angle theta value in degree')
     parser.add_argument('--center-angle-phi', type=float, default=None, help='Center angle phi value in degree')
     parser.add_argument('--beam-pattern', type=str, choices=['linear', 'fibonacci', 'circular'], default='linear', help='Beam pattern type')
-    parser.add_argument('--pattern-rotation', type=float, default=0, help='Pattern rotation angle in degree')
     return parser.parse_args()
 
 def arg_verification(arg:argparse.Namespace) -> dict[str, Any]:
@@ -31,7 +30,7 @@ def arg_verification(arg:argparse.Namespace) -> dict[str, Any]:
     ret_dict = dict()
     ret_dict['home_dir'] = arg.home_dir
     ret_dict['oai_dir'] = arg.oai_dir
-    ret_dict['executables_dir'] = arg.executables_dir
+    ret_dict['exec_dir'] = arg.executables_dir
     ret_dict['softmodem_bin'] = arg.softmodem_bin
     ret_dict['flexric_dir'] = arg.flexric_dir
     ret_dict['flexric_build_dir'] = arg.flexric_build_dir

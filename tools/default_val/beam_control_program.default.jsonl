@@ -1,0 +1,21 @@
+// initial state -- method #0
+{"start_id": 1, "end_id": 1, "step": -1, "method": 0, "iters": -1, "reduction": 0, "duration": 10}
+
+// motion stop -- method #0 -- 1
+{"start_id": 1, "end_id": 1, "step": -1, "method": 0, "iters": 1, "reduction": 1, "duration": 10}
+// Reciprocating motion -- method #1 -- 2..26..2
+{"start_id": 2, "end_id": 26, "step": 1, "method": 1, "iters": 1, "reduction": 0, "duration": 10}
+{"start_id": 26, "end_id": 2, "step": 1, "method": 1, "iters": 1, "reduction": 1, "duration": 10}
+// motion stop -- method #0 -- 1
+{"start_id": 1, "end_id": 1, "step": -1, "method": 0, "iters": 1, "reduction": 1, "duration": 10}
+// Resuming reciprocating motion -- method#1 -- 27..52..27
+{"start_id": 27, "end_id": 52, "step": 1, "method": 1, "iters": 1, "reduction": 1, "duration": 10}
+{"start_id": 52, "end_id": 27, "step": 1, "method": 1, "iters": 1, "reduction": 1, "duration": 10}
+// motion stop -- method #0 -- 1
+{"start_id": 1, "end_id": 1, "step": -1, "method": 0, "iters": 1, "reduction": 1, "duration": 10}
+
+// Random motion -- method #2 -- random([1:52]) x3
+{"start_id": 1, "end_id": 52, "step": -1, "method": 2, "iters": 3, "reduction": 0, "duration": 5}
+
+// termination -- method #0
+{"start_id": 1, "end_id": 1, "step": -1, "method": 0, "iters": -1, "reduction": 0, "duration": 10}

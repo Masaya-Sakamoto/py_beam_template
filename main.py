@@ -2,7 +2,8 @@ from lib.make_beam_file import create_beam_table_csv, create_beam_table
 from lib.defs_beams import def_lin_beams, def_basic_fibonacci_beams
 from lib.defs_beam_sweeping import def_lin_beam_sweeping
 from lib.defs_beam_sweep_op import sequence_ops
-from tools.arg_parser import arg_parser
+from pytypes.type_beam import BeamPattern, beam_control_program_t, beam_t, config_t
+from tools.parser import arg_parser
 from tools.softmodem_management import run_softmodem, kill_softmodem
 import shutil
 
@@ -19,9 +20,38 @@ import shutil
 # beam_switch_interval = 20
 
 
-def main(args:):
+def main(conf: config_t, program: list[beam_control_program_t]):
+    """
+    1. beam_listsを作成 list[list[dict[str, int]]]
+    2. beam_listsからbs_seqを作成
+    3. beam_listsからbeam_tableを作成 list[list[dict[str,str]]]
+    4. beam_tableからcsvを作成
+    5. csvを再配置
+    6. softmodem起動
+    7. beam-sweepingを実行
+    """
+    # beam_tableの作成
+    beam_table: list[beam_t] = []
+    if conf['beam_pattern'] == BeamPattern.LINEAR:
+        pass
+    elif conf['beam_pattern'] == BeamPattern.FIBONACCI:
+        pass
+    elif conf['beam_pattern'] == BeamPattern.CIRCULAR:
+        pass
+    elif conf['beam_pattern'] == BeamPattern.CUSTOM:
+        pass
+    else:
+        raise ValueError(f"Unsupported beam pattern: {conf['beam_pattern']}")
+    
+    # beam table csvファイルを作成
+    
+    # beam control tableを作成
 
+    # softmodem起動
 
+    # beam controlを実行
+
+    # 停止処理を書く
 
 def _main(args):
     """
@@ -44,16 +74,16 @@ def _main(args):
         beams_size = (theta_max - theta_min) // theta_step + 1
         beams_lists.append(def_lin_beams(
             id_start=2,
-            theta_start=theta_min,
-            theta_end=theta_max,
-            pattern_rotation=pattern_rotation,
+            theta_start_d=theta_min,
+            theta_end_d=theta_max,
+            pattern_rotation_d=pattern_rotation,
             include_end=True,
             step=theta_step))
         beams_lists.append(def_lin_beams(
             id_start=beams_size+2,
-            theta_start=theta_min,
-            theta_end=theta_max,
-            pattern_rotation=(pattern_rotation+180)%360,
+            theta_start_d=theta_min,
+            theta_end_d=theta_max,
+            pattern_rotation_d=(pattern_rotation+180)%360,
             include_end=True,
             step=theta_step))
 

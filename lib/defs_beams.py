@@ -1,12 +1,20 @@
 import math
 
-def def_lin_beams(id_start:int, theta_start:int, theta_end:int, pattern_rotation:int, include_end:bool, step:int=1) -> list[dict[str, int]]:
+from pytypes.type_beam import beam_t
+
+
+def def_lin_beams(id_start:int, theta_start_d:int, theta_end_d:int, pattern_rotation_d:int, include_end:bool, step:int=1) -> list[beam_t]:
     """
     Generate a list of beam IDs based on a linear sequence.
 
     """
-    last_theta = theta_end+step if include_end else theta_end
-    return [{"id": id_start + i, "theta": theta, "phi": pattern_rotation} for i, theta in enumerate(range(theta_start, last_theta, step))]
+    last_theta = theta_end_d+step if include_end else theta_end_d
+    return [{
+        "id": id_start + i,
+        "dB": 0,  # Default dB value, can be modified later 
+        "theta": theta_d,
+        "phi": pattern_rotation_d
+    } for i, theta_d in enumerate(range(theta_start_d, last_theta, step))]
 
 def __snap_integer_angle(float_angle:float) -> int:
     return int(round(float_angle * 180 / math.pi, 0) * math.pi / 180)

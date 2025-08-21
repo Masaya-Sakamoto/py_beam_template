@@ -14,17 +14,17 @@ def test_create_beam_table():
     origin = {'id':1, 'theta': 0, 'phi': 0}
     beams1 = def_lin_beams(
         id_start=2,
-        theta_start=1,
-        theta_end=25,
-        pattern_rotation=0,
+        theta_start_d=1,
+        theta_end_d=25,
+        pattern_rotation_d=0,
         include_end=True,
         step=1
     )
     beams2 = def_lin_beams(
         id_start=27,
-        theta_start=1,
-        theta_end=25,
-        pattern_rotation=180,
+        theta_start_d=1,
+        theta_end_d=25,
+        pattern_rotation_d=180,
         include_end=True,
         step=1
     )
@@ -58,17 +58,17 @@ def test_create_beam_table_csv():
     origin = {'id':1, 'theta': 0, 'phi': 0}
     beams1 = def_lin_beams(
         id_start=2,
-        theta_start=1,
-        theta_end=25,
-        pattern_rotation=0,
+        theta_start_d=1,
+        theta_end_d=25,
+        pattern_rotation_d=0,
         include_end=True,
         step=1
     )
     beams2 = def_lin_beams(
         id_start=27,
-        theta_start=1,
-        theta_end=25,
-        pattern_rotation=180,
+        theta_start_d=1,
+        theta_end_d=25,
+        pattern_rotation_d=180,
         include_end=True,
         step=1
     )

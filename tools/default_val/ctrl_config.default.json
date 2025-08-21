@@ -8,7 +8,7 @@
     "xapp_beam_management_bin": "oaibox_xapp_beam_management",
     "local_beam_table_csv_location": "./CustomBatchBeams.csv",
     "du_beam_table_csv_location": "radio/USRP/setup/CustomBatchBeams.csv",
-    "beam_control_program_json": "./beam_control_program.default.jsonl",
+    "beam_control_program_json": "./beam_control_program.sample.jsonl",
     "theta_min": 0,
     "theta_max": 25,
     "theta_step": 1,

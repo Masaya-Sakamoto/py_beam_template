@@ -1,6 +1,14 @@
 from typing import TypedDict
+from enum import Enum, auto
 
 dB_t = int
+
+class BeamPattern(Enum):
+    CONST = auto()
+    LINEAR = auto()
+    FIBONACCI = auto()
+    CIRCULAR = auto()   # not implemented
+    CUSTOM = auto()     # not implemented
 
 class beam_t(TypedDict):
     id: int
@@ -31,7 +39,7 @@ class beam_str_t(TypedDict):
 class args_t(TypedDict):
     config_file: str
 
-class config_t(TypedDict):
+class config_file_t(TypedDict):
     home_dir: str
     oai_dir: str
     exec_dir: str
@@ -41,8 +49,25 @@ class config_t(TypedDict):
     xapp_beam_management_bin: str
     local_beam_table_csv_location: str
     du_beam_table_csv_location: str
-    beam_control_program_json: str # beam_control_program_t
+    beam_control_program_json: str 
     beam_pattern: str
     theta_min: int
     theta_max: int
     pattern_rotation: int
+
+class config_t(TypedDict):
+    home_dir: str
+    oai_dir: str
+    exec_dir: str
+    softmodem_bin: str
+    flexric_dir: str
+    flexric_build_dir: str
+    xapp_beam_management_bin: str
+    xapp_beam_management_bin_path: str
+    local_beam_table_csv_location: str
+    du_beam_table_csv_location: str
+    beam_control_program_json: str # beam_control_program_t
+    beam_pattern: BeamPattern
+    theta_min: float
+    theta_max: float
+    pattern_rotation: float

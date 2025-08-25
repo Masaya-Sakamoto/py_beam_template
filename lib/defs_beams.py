@@ -80,7 +80,7 @@ def __golden_angle():
 
 def __phyllotaxis_points(N:int, delta:float) -> map_unit_disc_coord_t:
     """
-    平面上のphyllotaxis点列を (r, theta) で返す。
+    平面上のphyllotaxis点を (r, theta) で返す。
     半径は単位円内に正規化。
     delta \\in [0,1)
     """
@@ -201,7 +201,7 @@ def __phyllotaxis_point_on_hemisphere(
     2. それを当面積写像で半球にマッピングする
     3. 最後に天頂角を制限して返す -- 2., 3. ... __map_to_zenith_angle
     """
-    # 極座標系でphyllotaxis点列を生成
+    # 極座標系でphyllotaxis点を生成
     udc = __phyllotaxis_points(N, delta)
     # 天頂角にマッピング
     uhc = __map_to_hemisphere_coords(udc)
@@ -230,7 +230,7 @@ def def_const_linear_beams(
     pattern_rotation = pattern_rotation_d * math.pi / 180
     center_angle_theta = center_angle_theta_d * math.pi / 180
     center_angle_phi = center_angle_phi_d * math.pi / 180
-    # 単位変球面上にN点の線形点列を生成
+    # 単位変球面上にN点の線形点を生成
     uhc =  __linear_point_on_hemisphere(
         N=N,
         start_point=start_point,
@@ -266,7 +266,7 @@ def def_const_fibonacci_beams(
     pattern_rotation = pattern_rotation_d * PI / PI_D
     center_angle_theta = center_angle_theta_d * PI / PI_D
     center_angle_phi = center_angle_phi_d * PI / PI_D
-    # 単位変球面上にN点のphyllotaxis点列を生成
+    # 単位変球面上にN点のphyllotaxis点を生成
     uhc = __phyllotaxis_point_on_hemisphere(
         N,
         delta,

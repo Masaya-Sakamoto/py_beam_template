@@ -1,6 +1,6 @@
 from typing import TypedDict
 from enum import Enum, auto
-from unit import dB_t
+from unit import dB_t, unit_disc_coord_t
 
 class beam_t(TypedDict):
     id: int
@@ -119,3 +119,9 @@ class config_t(TypedDict):
     theta_min: float
     theta_max: float
     pattern_rotation: float
+
+class beam_template_t(TypedDict):
+    type: BeamPattern
+    start_point: unit_disc_coord_t
+    end_point: unit_disc_coord_t
+    steps: int

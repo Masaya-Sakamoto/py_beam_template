@@ -1,7 +1,7 @@
 import argparse
 from os import getenv
 from typing import Any
-from pytypes.type_beam import beam_control_preload_t, config_file_t, config_t, beam_control_program_t
+from pytypes.type_beam import beam_control_preload_t, config_file_t, config_t, beam_control_program_t, beam_template_t
 from pytypes.type_beam import BeamPattern, BeamControlMethod
 from pytypes.unit import PI, PI_D
 import json
@@ -68,7 +68,23 @@ def verify_conf(config_f: config_file_t) -> config_t:
 def parse_beam_control_program_json(json_file: Path) -> list[beam_control_preload_t]:
     try:
         with json_file.open('r') as f:
-            loaded = []
+            loaded:list[beam_control_preload_t] = []
+            for line in f:
+                line = line.strip()
+                if not line or line.startswith("//"):
+                    continue
+                try:
+                    loaded.append(json.loads(line))
+                except json.JSONDecodeError:
+                    raise ValueError(f"Invalid JSON format in line: {line}")
+            return loaded
+    except FileNotFoundError:
+        raise FileNotFoundError(f"File {json_file} not found.")
+    
+def parse_beam_template_json(json_file:Path) -> list[beam_template_t]:
+    try:
+        with json_file.open('r') as f:
+            loaded:list[beam_template_t] = []
             for line in f:
                 line = line.strip()
                 if not line or line.startswith("//"):

@@ -95,12 +95,19 @@ def parse_beam_template_json(json_file:Path) -> list[beam_template_file_t]:
     except FileNotFoundError:
         raise FileNotFoundError(f"File {json_file} not found.")
 
-def arg_parser() -> config_t:
+def arg_parser(set_config_file_path:str|None=None) -> config_t:
     """
     Parse command line arguments and return them as a dictionary.
     """
-    args = parse_args()
-    conf_f = parse_conf(Path(args.conf))
+    conf_path = None
+    if set_config_file_path:
+        conf_path = Path(set_config_file_path)
+    else:
+        args = parse_args()
+        conf_path = Path(args.conf)
+    if not conf_path:
+        raise ValueError("conf_pathが設定されませんでした。")
+    conf_f = parse_conf(conf_path)
     return verify_conf(conf_f)
 
 def get_beam_control_program_from_json(config: config_t) -> list[beam_control_program_t]:

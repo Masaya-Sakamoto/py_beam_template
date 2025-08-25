@@ -209,6 +209,8 @@ def __phyllotaxis_point_on_hemisphere(
         uhc,
         theta_max=theta_max,
         pattern_rotation=pattern_rotation,
+        center_theta=center_angle_theta,
+        center_phi=center_angle_phi,
         is_int_val=is_int_val)
     return uhc
 
@@ -218,11 +220,16 @@ def def_const_linear_beams(
         end_point:unit_disc_coord_t,
         constant_dB:int,
         theta_max:float,
-        pattern_rotation:float,
-        center_angle_theta:float,
-        center_angle_phi:float,
+        pattern_rotation_d:float,
+        center_angle_theta_d:float,
+        center_angle_phi_d:float,
         is_int_val:bool
     ) -> list[beam_t]:
+    # 度数法 -> 弧度法
+    pattern_rotation = pattern_rotation_d * math.pi / 180
+    center_angle_theta = center_angle_theta_d * math.pi / 180
+    center_angle_phi = center_angle_phi_d * math.pi / 180
+    # 単位変球面上にN点の線形点列を生成
     uhc =  __linear_point_on_hemisphere(
         N=N,
         start_point=start_point,
@@ -237,8 +244,8 @@ def def_const_linear_beams(
         {
             "id": i,
             "dB": constant_dB,
-            "theta": int(item["theta"]),
-            "phi": int(item["phi"])
+            "theta": int(item["theta"] * 180 / math.pi),
+            "phi": int(item["phi"] * 180 / math.pi)
         } for i, item in enumerate(uhc)]
 
 def def_const_fibonacci_beams(
@@ -247,18 +254,23 @@ def def_const_fibonacci_beams(
         _end_point:unit_disc_coord_t,
         constant_dB:int,
         theta_max:float,
-        pattern_rotation:float,
-        center_angle_theta:float,
-        center_angle_phi:float
+        pattern_rotation_d:float,
+        center_angle_theta_d:float,
+        center_angle_phi_d:float
     ) -> list[dict[str, int]]:
+    # 度数法 -> 弧度法
     delta = start_point["r"]
-    pattern_rotation += start_point["theta"]
+    center_angle_phi_d += start_point["theta"]
+    pattern_rotation = pattern_rotation_d * math.pi / 180
+    center_angle_theta = center_angle_theta_d * math.pi / 180
+    center_angle_phi = center_angle_phi_d * math.pi / 180
+    # 単位変球面上にN点のphyllotaxis点列を生成
     uhc = __phyllotaxis_point_on_hemisphere(N, delta, theta_max, pattern_rotation=pattern_rotation, center_angle_theta=center_angle_theta, center_angle_phi=center_angle_phi, is_int_val=True)
     # 型ヒント用: float(int) -> int -- int(t), int(p)
     return [
         {
             "id": i,
             "dB": constant_dB,
-            "theta": int(item["theta"]),
-            "phi": int(item["phi"])
+            "theta": int(item["theta"] * 180 / math.pi),
+            "phi": int(item["phi"] * 180 / math.pi)
         } for i, item in enumerate(uhc)]

@@ -1,5 +1,7 @@
     
 from typing import TypedDict, Generator
+from math import pi as PI
+PI_D = 180
 
 
 dB_t = int

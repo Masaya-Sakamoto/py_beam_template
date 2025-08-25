@@ -2,8 +2,9 @@ import math
 from pytypes.type_beam import beam_t
 from pytypes.unit import unit_disc_coord_t, map_unit_disc_coord_t, unit_disc_coord_generator
 from pytypes.unit import unit_hemisphere_coord_t, map_unit_hemisphere_coord_t
+from pytypes.unit import PI, PI_D
 
-
+# This function is deprecated and will be removed
 def def_lin_beams(id_start:int, theta_start_d:int, theta_end_d:int, pattern_rotation_d:int, include_end:bool, step:int=1) -> list[beam_t]:
     """
     Generate a list of beam IDs based on a linear sequence.
@@ -71,11 +72,11 @@ def __linspace_on_unitdisc(
             yield {"r": math.hypot(x_i, y_i), "theta": math.atan2(y_i, x_i)}
 
 def __snap_integer_angle(float_angle:float) -> int:
-    return int(round(float_angle * 180 / math.pi, 0) * math.pi / 180)
+    return int(round(float_angle * PI_D / PI, 0) * PI / PI_D)
 
 def __golden_angle():
     phi = (1 + math.sqrt(5)) / 2
-    return 2 * math.pi / (phi**2)
+    return 2 * PI / (phi**2)
 
 def __phyllotaxis_points(N:int, delta:float) -> map_unit_disc_coord_t:
     """
@@ -132,7 +133,7 @@ def __mod_theta_phi(
 
     if theta_max:
         unit_hemisphere_coords = map(lambda uhc: {
-            "theta": uhc["theta"] * theta_max * 2 / math.pi,
+            "theta": uhc["theta"] * theta_max * 2 / PI,
             "phi": uhc["phi"]
         }, unit_hemisphere_coords)
     
@@ -151,11 +152,11 @@ def __linear_point_on_unitdisc(
         N: int,
         include_end: bool
 ) -> map_unit_disc_coord_t:
-    _lug = __linspace_on_unitdisc(start_point, end_point, num=N, include_end=include_end)
+    udc = __linspace_on_unitdisc(start_point, end_point, num=N, include_end=include_end)
     return map(lambda lc: {
         "r": lc["r"],
         "theta": lc["theta"]
-    }, _lug)
+    }, udc)
 
 
 def __linear_point_on_hemisphere(
@@ -244,8 +245,8 @@ def def_const_linear_beams(
         {
             "id": i,
             "dB": constant_dB,
-            "theta": int(item["theta"] * 180 / math.pi),
-            "phi": int(item["phi"] * 180 / math.pi)
+            "theta": int(item["theta"] * PI_D / PI),
+            "phi": int(item["phi"] * PI_D / PI)
         } for i, item in enumerate(uhc)]
 
 def def_const_fibonacci_beams(
@@ -256,21 +257,29 @@ def def_const_fibonacci_beams(
         theta_max:float,
         pattern_rotation_d:float,
         center_angle_theta_d:float,
-        center_angle_phi_d:float
+        center_angle_phi_d:float,
+        is_int_val:bool
     ) -> list[dict[str, int]]:
     # 度数法 -> 弧度法
     delta = start_point["r"]
     center_angle_phi_d += start_point["theta"]
-    pattern_rotation = pattern_rotation_d * math.pi / 180
-    center_angle_theta = center_angle_theta_d * math.pi / 180
-    center_angle_phi = center_angle_phi_d * math.pi / 180
+    pattern_rotation = pattern_rotation_d * PI / PI_D
+    center_angle_theta = center_angle_theta_d * PI / PI_D
+    center_angle_phi = center_angle_phi_d * PI / PI_D
     # 単位変球面上にN点のphyllotaxis点列を生成
-    uhc = __phyllotaxis_point_on_hemisphere(N, delta, theta_max, pattern_rotation=pattern_rotation, center_angle_theta=center_angle_theta, center_angle_phi=center_angle_phi, is_int_val=True)
-    # 型ヒント用: float(int) -> int -- int(t), int(p)
+    uhc = __phyllotaxis_point_on_hemisphere(
+        N,
+        delta,
+        theta_max,
+        pattern_rotation=pattern_rotation,
+        center_angle_theta=center_angle_theta,
+        center_angle_phi=center_angle_phi,
+        is_int_val=is_int_val
+    )
     return [
         {
             "id": i,
             "dB": constant_dB,
-            "theta": int(item["theta"] * 180 / math.pi),
-            "phi": int(item["phi"] * 180 / math.pi)
+            "theta": int(item["theta"] * PI_D / PI),
+            "phi": int(item["phi"] * PI_D / PI)
         } for i, item in enumerate(uhc)]

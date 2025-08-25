@@ -3,7 +3,7 @@ from os import getenv
 from typing import Any
 from pytypes.type_beam import beam_control_preload_t, config_file_t, config_t, beam_control_program_t
 from pytypes.type_beam import BeamPattern, BeamControlMethod
-from math import pi as PI
+from pytypes.unit import PI, PI_D
 import json
 from pathlib import Path
 
@@ -43,9 +43,9 @@ def verify_conf(config_f: config_file_t) -> config_t:
         'beam_pattern': BeamPattern.UNDEFINED,
         'theta_min_d': config_f['theta_min_d'],
         'theta_max_d': config_f['theta_max_d'],
-        'theta_min': config_f['theta_min_d']*PI/180,
-        'theta_max': config_f['theta_max_d']*PI/180,
-        'pattern_rotation': config_f['pattern_rotation']*PI/180,
+        'theta_min': config_f['theta_min_d']*PI/PI_D,
+        'theta_max': config_f['theta_max_d']*PI/PI_D,
+        'pattern_rotation': config_f['pattern_rotation']*PI/PI_D,
     }
     # xapp_beam_management_bin_path
     config["xapp_beam_management_bin_path"] = f"\

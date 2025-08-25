@@ -1,0 +1,25 @@
+// COMMON RULES
+// Angles are defined in degrees
+// theta_*: defined on the unit hemisphere
+// theta_max: Parameter limiting the zenith angle
+
+// EXAMPLE: LINEAR BEAM PATTERN
+{"type": "CONST", "start_point": {"r": 0.0, "theta": 0.0}, "end_point": {"r": 0.0, "theta": 0.0}, "steps": -1}
+{"type": "LINEAR", "start_point": {"r": 0.04, "theta": 0.0}, "end_point": {"r": 1.0, "theta": 0.0}, "steps": 25}
+{"type": "LINEAR", "start_point": {"r": 0.04, "theta": 180.0}, "end_point": {"r": 1.0, "theta": 180.0}, "steps": 25}
+
+// EXAMPLE: FIBONACCI BEAM PATTERN
+// start_point.r: set as delta
+// start_point.theta: set as constant rotation
+{"type": "FIBONACCI", "start_point": {"r": 0.0, "theta": 0.0}, "end_point": {"r": -1, "theta": -1}, "steps": 64}
+
+// EXAMPLE: CIRCULAR BEAM PATTERN
+// start_point.r: set as delta
+// start_point.theta: set as constant rotation
+{"type": "CONST", "start_point": {"r": 0.0, "theta": 0.0}, "end_point": {"r": 0.0, "theta": 0.0}, "steps": -1}
+{"type": "CIRCULAR", "start_point": {"r": 0.25, "theta": 0.0}, "end_point": {"r": 0.25, "theta": 0}, "steps": 12}
+{"type": "CIRCULAR", "start_point": {"r": 0.5, "theta": 0.0}, "end_point": {"r": 0.5, "theta": 0}, "steps": 12}
+{"type": "CIRCULAR", "start_point": {"r": 0.75, "theta": 0.0}, "end_point": {"r": 0.75, "theta": 0}, "steps": 12}
+
+// EXAMPLE: CUSTOM BEAM PATTERN
+{"type": "CONST", "start_point": {"r": 0.648, "theta": 34.3}, "end_point": {"r": 0.0, "theta": 0.0}, "steps": -1}

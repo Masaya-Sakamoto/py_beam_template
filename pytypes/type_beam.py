@@ -1,15 +1,6 @@
 from typing import TypedDict
 from enum import Enum, auto
-
-dB_t = int
-
-class BeamPattern(Enum):
-    UNDEFINED = auto()
-    CONST = auto()
-    LINEAR = auto()
-    FIBONACCI = auto()
-    CIRCULAR = auto()   # not implemented
-    CUSTOM = auto()     # not implemented
+from unit import dB_t
 
 class beam_t(TypedDict):
     id: int
@@ -17,11 +8,65 @@ class beam_t(TypedDict):
     theta: int
     phi: int
 
+class BeamControlMethod(Enum):
+    UNDEFINED = auto()
+    CONST = auto()
+    SEQUENTIAL = auto()
+    RANDOM = auto()
+
+    @classmethod
+    def from_string(cls, method_str: str) -> 'BeamControlMethod':
+        """
+        Convert a string to a BeamControlMethod enum member.
+
+        Args:
+            method_str (str): The name of the BeamControlMethod member as a string.
+
+        Returns:
+            BeamControlMethod: The corresponding enum member if found, otherwise BeamControlMethod.UNDEFINED.
+        """
+        try:
+            return cls[method_str]
+        except KeyError:
+            return cls.UNDEFINED
+
+class BeamPattern(Enum):
+    UNDEFINED = auto()
+    CONST = auto()
+    LINEAR = auto()
+    FIBONACCI = auto()
+    CIRCULAR = auto()   # not implemented
+
+    @classmethod
+    def from_string(cls, pattern_str: str) -> 'BeamPattern':
+        """
+        Convert a string to a BeamPattern enum member.
+
+        Args:
+            pattern_str (str): The name of the BeamPattern member as a string.
+
+        Returns:
+            BeamPattern: The corresponding enum member if found, otherwise BeamPattern.UNDEFINED.
+        """
+        try:
+            return cls[pattern_str]
+        except KeyError:
+            return cls.UNDEFINED
+
+class beam_control_preload_t(TypedDict):
+    start_id: int
+    end_id: int
+    step: int
+    method: str
+    iters: int
+    reduction: int
+    duration: int
+
 class beam_control_program_t(TypedDict):
     start_id: int
     end_id: int
     step: int
-    method: int
+    method: BeamControlMethod
     iters: int
     reduction: int
     duration: int

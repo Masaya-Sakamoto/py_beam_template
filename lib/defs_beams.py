@@ -1,5 +1,7 @@
 import math
 from pytypes.type_beam import beam_t
+from pytypes.unit import unit_disc_coord_t, map_unit_disc_coord_t, unit_disc_coord_generator
+from pytypes.unit import unit_hemisphere_coord_t, map_unit_hemisphere_coord_t
 
 
 def def_lin_beams(id_start:int, theta_start_d:int, theta_end_d:int, pattern_rotation_d:int, include_end:bool, step:int=1) -> list[beam_t]:
@@ -15,6 +17,59 @@ def def_lin_beams(id_start:int, theta_start_d:int, theta_end_d:int, pattern_rota
         "phi": pattern_rotation_d
     } for i, theta_d in enumerate(range(theta_start_d, last_theta, step))]
 
+def __linspace_on_unitdisc(
+    start:unit_disc_coord_t,
+    stop:unit_disc_coord_t,
+    num:int,
+    include_end:bool=True
+) -> unit_disc_coord_generator:
+    """
+    numpy.linspaceと同等の機能を持つジェネレーター関数
+    
+    Parameters:
+    -----------
+    start : float
+        開始値
+    stop : float
+        終了値
+    num : int, optional
+        生成する値の数 (デフォルト: 50)
+    endpoint : bool, optional
+        終了値を含むかどうか (デフォルト: True)
+    
+    Yields:
+    -------
+    float
+        等間隔に配置された値
+    """
+    if num <= 0:
+        return
+    
+    if num == 1:
+        yield start
+        return
+    
+    start_x = start["r"] * math.cos(start["theta"])
+    start_y = start["r"] * math.sin(start["theta"])
+    stop_x = stop["r"] * math.cos(stop["theta"])
+    stop_y = stop["r"] * math.sin(stop["theta"])
+    if include_end:
+        # 終了値を含む場合
+        step_x = (stop_x - start_x) / (num - 1)
+        step_y = (stop_y - start_y) / (num - 1)
+        for i in range(num):
+            x_i = start_x + i * step_x
+            y_i = start_y + i * step_y
+            yield {"r": math.hypot(x_i, y_i), "theta": math.atan2(y_i, x_i)}
+    else:
+        # 終了値を含まない場合
+        step_x = (stop_x - start_x) / num
+        step_y = (stop_y - start_y) / num
+        for i in range(num):
+            x_i = start_x + i * step_x
+            y_i = start_y + i * step_y
+            yield {"r": math.hypot(x_i, y_i), "theta": math.atan2(y_i, x_i)}
+
 def __snap_integer_angle(float_angle:float) -> int:
     return int(round(float_angle * 180 / math.pi, 0) * math.pi / 180)
 
@@ -22,7 +77,7 @@ def __golden_angle():
     phi = (1 + math.sqrt(5)) / 2
     return 2 * math.pi / (phi**2)
 
-def __phyllotaxis_points(N:int, delta:float) -> tuple[map[float], map[float]]:
+def __phyllotaxis_points(N:int, delta:float) -> map_unit_disc_coord_t:
     """
     平面上のphyllotaxis点列を (r, theta) で返す。
     半径は単位円内に正規化。
@@ -30,56 +85,107 @@ def __phyllotaxis_points(N:int, delta:float) -> tuple[map[float], map[float]]:
     """
     n = range(N)
     ga = __golden_angle()
-    r = map(lambda n: math.sqrt((n + delta) / N), n)
-    phi = map(lambda n: n * ga, n)
-    return r, phi
+    return map(lambda n: {"r": math.sqrt((n + delta) / N), "theta": n * ga}, n)
 
-def __map_to_zenith_angle(r:map[float], phi:map[float]) -> map[float]:
-    theta = map(lambda r: math.acos(1 - r**2), r)
-    return theta
+def __map_to_hemisphere_coords(unitdisc_coords:map_unit_disc_coord_t) -> map_unit_hemisphere_coord_t:
+    unit_hemisphere_coords:map_unit_hemisphere_coord_t = map(lambda udc: {
+        "theta": math.acos(1 - udc["r"]**2),
+        "phi": udc["theta"]
+    }, unitdisc_coords)
+    return unit_hemisphere_coords
 
 def __mod_theta_phi(
-        theta:map[float],
-        phi:map[float],
+        unit_hemisphere_coords:map_unit_hemisphere_coord_t,
         theta_max:float|None=None,
         pattern_rotation:float|None=None,
         center_theta:float|None=None,
         center_phi:float|None=None,
         is_int_val:bool|None=False,
-    ) -> tuple[map[float|int], map[float|int]]:
+    ) -> map_unit_hemisphere_coord_t:
     if pattern_rotation:
-        phi = map(lambda p: p + pattern_rotation, phi)
-    if theta_max:
-        theta = map(lambda t: t * theta_max * 2 / math.pi, theta)
-    if center_theta:
+        unit_hemisphere_coords = map(lambda uhc: {
+            "theta": uhc["theta"],
+            "phi": uhc["phi"] + pattern_rotation
+        }, unit_hemisphere_coords)
+    if center_theta: # FIXME: implement center_theta adjustment
+        """
+        if {theta}-center_theta in pi/2
+            theta = map(lambda t: t + center_theta, theta)
+        else:
+            NOT IMPLEMENTED
+              ideas
+                - Set them to pi/2
+                - Ignore such points
+        """
         print("Warning: center_theta is not implemented in __mod_theta_phi")
     if center_phi:
-        print("Warning: center_phi is not implemented in __mod_theta_phi")
+        unit_hemisphere_coords = map(lambda uhc: {
+            "theta": uhc["theta"],
+            "phi": uhc["phi"] + center_phi
+        }, unit_hemisphere_coords)
+
     # Normalize angles to [0, 2π)
-    theta = map(lambda t: t % (2 * math.pi), theta)
-    phi = map(lambda p: p % (2 * math.pi), phi)
+    unit_hemisphere_coords = map(lambda uhc: {
+        "theta": uhc["theta"] % (2 * math.pi),
+        "phi": uhc["phi"] % (2 * math.pi)
+    }, unit_hemisphere_coords)
+
+    if theta_max:
+        unit_hemisphere_coords = map(lambda uhc: {
+            "theta": uhc["theta"] * theta_max * 2 / math.pi,
+            "phi": uhc["phi"]
+        }, unit_hemisphere_coords)
+    
     if is_int_val is not None and is_int_val==True:
-        theta = map(__snap_integer_angle, theta)
-        phi = map(__snap_integer_angle, phi)
+        unit_hemisphere_coords = map(lambda uhc: {
+            "theta": float(__snap_integer_angle(uhc["theta"])),
+            "phi": float(__snap_integer_angle(uhc["phi"]))
+        }, unit_hemisphere_coords)
         # Remove duplicates from an iterator
         # not implemented yet
-    return (theta, phi)
+    return unit_hemisphere_coords
 
-# FIXME: まだ単位円盤から変換する実装はしていない
+def __linear_point_on_unitdisc(
+        start_point: unit_disc_coord_t,
+        end_point: unit_disc_coord_t,
+        N: int,
+        include_end: bool
+) -> map_unit_disc_coord_t:
+    _lug = __linspace_on_unitdisc(start_point, end_point, num=N, include_end=include_end)
+    return map(lambda lc: {
+        "r": lc["r"],
+        "theta": lc["theta"]
+    }, _lug)
+
+
 def __linear_point_on_hemisphere(
-        theta_start_d:int,
-        theta_end_d:int,
-        theta_step_d:int,
+        N:int,
+        start_point:unit_disc_coord_t,
+        end_point:unit_disc_coord_t,
+        theta_max:float,
         pattern_rotation:float,
         center_angle_theta:float,
         center_angle_phi:float,
         is_int_val:bool
-    ) -> tuple[map[float|int], map[float|int]]:
-    step_vector = (theta_end_d - theta_start_d) // abs(theta_end_d - theta_start_d) * theta_step_d
-    theta = map(lambda t: t * math.pi / 180, range(theta_start_d, theta_end_d+step_vector, step_vector))
-    phi = map(lambda p: p, (pattern_rotation for _ in range(theta_start_d, theta_end_d+step_vector, step_vector)))
-    theta, phi = __mod_theta_phi(theta, phi, is_int_val=is_int_val)
-    return (theta, phi)
+    ) -> map_unit_hemisphere_coord_t:
+    udc = __linear_point_on_unitdisc(
+        start_point=start_point,
+        end_point=end_point,
+        N=N,
+        include_end=True
+    )
+    uhc = __map_to_hemisphere_coords(udc)
+    uhc = __mod_theta_phi(
+        uhc,
+        theta_max=theta_max,
+        pattern_rotation=pattern_rotation,
+        center_theta=center_angle_theta,
+        center_phi=center_angle_phi,
+        is_int_val=is_int_val
+    )
+
+    return uhc
+
 
 def __phyllotaxis_point_on_hemisphere(
         N:int, 
@@ -88,40 +194,71 @@ def __phyllotaxis_point_on_hemisphere(
         pattern_rotation:float,
         center_angle_theta:float,
         center_angle_phi:float,
-        is_int_val:bool) -> tuple[map[float|int], map[float|int]]:
+        is_int_val:bool) -> map_unit_hemisphere_coord_t:
     """
     1. phyllotaxis点を単位円盤に生成する ... __phyllotaxis_points
     2. それを当面積写像で半球にマッピングする
     3. 最後に天頂角を制限して返す -- 2., 3. ... __map_to_zenith_angle
     """
     # 極座標系でphyllotaxis点列を生成
-    r, phi = __phyllotaxis_points(N, delta)
+    udc = __phyllotaxis_points(N, delta)
     # 天頂角にマッピング
-    theta = __map_to_zenith_angle(r, phi)
+    uhc = __map_to_hemisphere_coords(udc)
     # 天頂角を制限して返す
-    theta, phi = __mod_theta_phi(theta, phi, theta_max=theta_max, pattern_rotation=pattern_rotation, is_int_val=is_int_val)
-    return (theta, phi)
+    uhc = __mod_theta_phi(
+        uhc,
+        theta_max=theta_max,
+        pattern_rotation=pattern_rotation,
+        is_int_val=is_int_val)
+    return uhc
 
-def def_basic_linear_beams(
-        theta_start_d:int,
-        theta_end_d:int,
-        theta_step_d:int,
+def def_const_linear_beams(
+        N: int,
+        start_point:unit_disc_coord_t,
+        end_point:unit_disc_coord_t,
+        constant_dB:int,
+        theta_max:float,
         pattern_rotation:float,
         center_angle_theta:float,
         center_angle_phi:float,
         is_int_val:bool
-    ) -> list[dict[str, int]]:
-    theta, phi =  __linear_point_on_hemisphere(theta_start_d, theta_end_d, theta_step_d, pattern_rotation, center_angle_theta, center_angle_phi, is_int_val)
-    return [{"id": i, "theta": int(t), "phi": int(p)} for i, (t, p) in enumerate(zip(theta, phi))]
+    ) -> list[beam_t]:
+    uhc =  __linear_point_on_hemisphere(
+        N=N,
+        start_point=start_point,
+        end_point=end_point,
+        theta_max=theta_max,
+        pattern_rotation=pattern_rotation,
+        center_angle_theta=center_angle_theta,
+        center_angle_phi=center_angle_phi,
+        is_int_val=is_int_val
+    )
+    return [
+        {
+            "id": i,
+            "dB": constant_dB,
+            "theta": int(item["theta"]),
+            "phi": int(item["phi"])
+        } for i, item in enumerate(uhc)]
 
-def def_basic_fibonacci_beams(
+def def_const_fibonacci_beams(
         N:int,
-        delta:float,
+        start_point:unit_disc_coord_t,
+        _end_point:unit_disc_coord_t,
+        constant_dB:int,
         theta_max:float,
         pattern_rotation:float,
         center_angle_theta:float,
         center_angle_phi:float
     ) -> list[dict[str, int]]:
-    theta, phi = __phyllotaxis_point_on_hemisphere(N, delta, theta_max, pattern_rotation=pattern_rotation, center_angle_theta=center_angle_theta, center_angle_phi=center_angle_phi, is_int_val=True)
+    delta = start_point["r"]
+    pattern_rotation += start_point["theta"]
+    uhc = __phyllotaxis_point_on_hemisphere(N, delta, theta_max, pattern_rotation=pattern_rotation, center_angle_theta=center_angle_theta, center_angle_phi=center_angle_phi, is_int_val=True)
     # 型ヒント用: float(int) -> int -- int(t), int(p)
-    return [{"id": i, "theta": int(t), "phi": int(p)} for i, (t, p) in enumerate(zip(theta, phi))]
+    return [
+        {
+            "id": i,
+            "dB": constant_dB,
+            "theta": int(item["theta"]),
+            "phi": int(item["phi"])
+        } for i, item in enumerate(uhc)]

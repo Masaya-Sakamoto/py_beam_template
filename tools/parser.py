@@ -1,7 +1,8 @@
 import argparse
 from os import getenv
 from typing import Any
-from pytypes.type_beam import config_file_t, config_t, beam_control_program_t, BeamPattern
+from pytypes.type_beam import beam_control_preload_t, config_file_t, config_t, beam_control_program_t
+from pytypes.type_beam import BeamPattern, BeamControlMethod
 from math import pi as PI
 import json
 from pathlib import Path
@@ -64,7 +65,7 @@ def verify_conf(config_f: config_file_t) -> config_t:
     # verification logic is not implemented
     return config
         
-def parse_beam_control_program_json(json_file: Path) -> list[beam_control_program_t]:
+def parse_beam_control_program_json(json_file: Path) -> list[beam_control_preload_t]:
     try:
         with json_file.open('r') as f:
             loaded = []
@@ -90,4 +91,17 @@ def arg_parser() -> config_t:
 
 def get_beam_control_program_json(config: config_t) -> list[beam_control_program_t]:
     json_file = Path(config['beam_control_program_json'])
-    return parse_beam_control_program_json(json_file)
+    preload = parse_beam_control_program_json(json_file)
+    bcp_lst = []
+    for item in preload:
+        bcp: beam_control_program_t = {
+            'start_id': item['start_id'],
+            'end_id': item['end_id'],
+            'step': item['step'],
+            'method': BeamControlMethod.from_string(item['method']),
+            'iters': item['iters'],
+            'reduction': item['reduction'],
+            'duration': item['duration']
+        }
+        bcp_lst.append(bcp)
+    return bcp_lst

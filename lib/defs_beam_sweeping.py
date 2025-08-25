@@ -1,4 +1,6 @@
 from pytypes.type_beam import beam_control_program_t, beam_t, beam_sweeping_t
+from pytypes.type_beam import BeamControlMethod
+import random
 
 def def_lin_beam_sweeping(origin: dict[str, int], beams: list[dict[str, int]]) -> list[dict[str, int]]:
     """
@@ -29,7 +31,7 @@ def write_const_program(const_index:int, reduction:bool, duration:int) -> beam_c
             'start_id': const_index,
             'end_id': const_index,
             'step': -1,
-            'method': 0,
+            'method': BeamControlMethod.CONST,
             'iters': -1,
             'reduction': reduction,
             'duration': duration
@@ -41,7 +43,7 @@ def write_lin_sweep_program(start_index:int, end_index:int, step:int, reduction:
             'start_id': start_index,
             'end_id': end_index,
             'step': step,
-            'method': 1,
+            'method': BeamControlMethod.SEQUENTIAL,
             'iters': 1,
             'reduction': reduction,
             'duration': duration
@@ -52,13 +54,18 @@ def write_random_sweep_program(start_index:int, end_index:int, step:int, reducti
         'start_id': start_index,
         'end_id': end_index,
         'step': step,
-        'method': 2,
+        'method': BeamControlMethod.RANDOM,
         'iters': iterations,
         'reduction': reduction,
         'duration': duration
     }
 
-def def_beam_sweeping(beam_table:list[beam_t], sweep_program_lst:list[beam_control_program_t], origin_id:int=1) -> list[beam_sweeping_t]:
+def def_beam_sweeping(
+        beam_table:list[beam_t],
+        sweep_program_lst:list[beam_control_program_t],
+        origin_id:int=1,
+        random_state=None   # FIXME: no type annotation
+    ) -> list[beam_sweeping_t]:
     """
     input: 
         [
@@ -108,7 +115,7 @@ def def_beam_sweeping(beam_table:list[beam_t], sweep_program_lst:list[beam_contr
         duration = program['duration']
 
         # Initial state or stop
-        if method == 0:
+        if method == BeamControlMethod.CONST:
             # skip if reduction is True
             if (
                 reduction and \
@@ -127,7 +134,7 @@ def def_beam_sweeping(beam_table:list[beam_t], sweep_program_lst:list[beam_contr
             })
 
         #  Sequential motion
-        elif method == 1:  
+        elif method == BeamControlMethod.SEQUENTIAL:
             for _ in range(iters):
                 step_vector = (end_id - start_id) // abs(end_id - start_id) * step
                 for beam_id in range(start_id, end_id + step_vector, step_vector):
@@ -148,9 +155,14 @@ def def_beam_sweeping(beam_table:list[beam_t], sweep_program_lst:list[beam_contr
                         'duration': duration
                     })
 
-        # Random motion     
-        elif method == 2:
-            import random
+        # Random motion
+        elif method == BeamControlMethod.RANDOM:
+            if random_state is not None:
+                random.setstate(random_state)
+            else:
+                # TODO: document the behavior
+                # FIXME: replace print to logging
+                print("Warning: random_state is None. The random sequence will not be reproducible.")
             for _ in range(iters):
                 # Get the start and end beams
                 _garbage, start_idx = __search_beam(beam_table, start_id)
@@ -173,5 +185,8 @@ def def_beam_sweeping(beam_table:list[beam_t], sweep_program_lst:list[beam_contr
                         'phi': random_beam['phi'],
                         'duration': duration
                     })
+        
+        else:
+            raise ValueError(f"Unknown method: {method}")
 
     return beam_sweeping

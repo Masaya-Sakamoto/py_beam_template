@@ -20,10 +20,10 @@ def create_beam_table_csv_data(beams:list[beam_t]) -> list[beam_str_t]:
     ]
     """
     beam_table = []
-    for be in beams:
+    for beam in beams:
         beam_table.append({
-            'TX': create_beam_str(be, 'TX'),
-            'RX': create_beam_str(be, 'RX')
+            'TX': create_beam_str(beam, 'TX'),
+            'RX': create_beam_str(beam, 'RX')
         })
     return beam_table
 

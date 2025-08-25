@@ -1,5 +1,5 @@
 from lib.make_beam_file import create_beam_table_csv, create_beam_table
-from lib.defs_beams import def_lin_beams, def_basic_fibonacci_beams
+from lib.defs_beams import def_lin_beams, def_const_fibonacci_beams
 from lib.defs_beam_sweeping import def_lin_beam_sweeping
 from lib.defs_beam_sweep_op import sequence_ops
 from pytypes.type_beam import BeamPattern, beam_control_program_t, beam_t, config_t
@@ -38,8 +38,6 @@ def main(conf: config_t, program: list[beam_control_program_t]):
     elif beam_pattern == BeamPattern.FIBONACCI:
         pass
     elif beam_pattern == BeamPattern.CIRCULAR:
-        pass
-    elif beam_pattern == BeamPattern.CUSTOM:
         pass
     else:
         raise ValueError(f"Unsupported beam pattern: {conf['beam_pattern']}")
@@ -93,7 +91,7 @@ def _main(args):
         # 3. beam_listsからbeam_tableを作成
         beam_table = create_beam_table([origin,] + beams_lists[0] + beams_lists[1])
     elif args['beam_pattern'] == "fibonacci":
-        beams_lists.append(def_basic_fibonacci_beams(
+        beams_lists.append(def_const_fibonacci_beams(
             N = 64,
             delta=0.0,
             theta_max=args['theta_max'],

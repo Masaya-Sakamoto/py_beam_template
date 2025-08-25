@@ -15,5 +15,6 @@
     "pattern_rotation_angle": 0,
     "center_angle_theta": 0,
     "center_angle_phi":0,
-    "pattern_rotation": 0
+    "pattern_rotation": 0,
+    "random_seed": 1234567890
 }

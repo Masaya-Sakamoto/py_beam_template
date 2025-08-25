@@ -95,11 +95,12 @@ class config_file_t(TypedDict):
     xapp_beam_management_bin: str
     local_beam_table_csv_location: str
     du_beam_table_csv_location: str
+    beam_template_file_json: str
     beam_control_program_json: str 
-    beam_pattern: str
     theta_min_d: int
     theta_max_d: int
     pattern_rotation: int
+    random_seed:int
 
 class config_t(TypedDict):
     home_dir: str
@@ -112,13 +113,20 @@ class config_t(TypedDict):
     xapp_beam_management_bin_path: str
     local_beam_table_csv_location: str
     du_beam_table_csv_location: str
+    beam_template_file_json: str
     beam_control_program_json: str # beam_control_program_t
-    beam_pattern: BeamPattern
     theta_max_d: int
     theta_min_d: int
     theta_min: float
     theta_max: float
     pattern_rotation: float
+    random_seed:int
+
+class beam_template_file_t(TypedDict):
+    type: str
+    start_point: unit_disc_coord_t
+    end_point: unit_disc_coord_t
+    steps: int
 
 class beam_template_t(TypedDict):
     type: BeamPattern

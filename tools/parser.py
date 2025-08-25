@@ -1,7 +1,8 @@
 import argparse
 from os import getenv
 from typing import Any
-from pytypes.type_beam import beam_control_preload_t, config_file_t, config_t, beam_control_program_t, beam_template_t
+from pytypes.type_beam import beam_control_preload_t, config_file_t, config_t
+from pytypes.type_beam import beam_control_program_t, beam_template_t, beam_template_file_t
 from pytypes.type_beam import BeamPattern, BeamControlMethod
 from pytypes.unit import PI, PI_D
 import json
@@ -39,13 +40,14 @@ def verify_conf(config_f: config_file_t) -> config_t:
         'xapp_beam_management_bin_path': '',
         'local_beam_table_csv_location': config_f['local_beam_table_csv_location'],
         'du_beam_table_csv_location': config_f['du_beam_table_csv_location'],
+        'beam_template_file_json':config_f['beam_template_file_json'],
         'beam_control_program_json': config_f['beam_control_program_json'],
-        'beam_pattern': BeamPattern.UNDEFINED,
         'theta_min_d': config_f['theta_min_d'],
         'theta_max_d': config_f['theta_max_d'],
         'theta_min': config_f['theta_min_d']*PI/PI_D,
         'theta_max': config_f['theta_max_d']*PI/PI_D,
         'pattern_rotation': config_f['pattern_rotation']*PI/PI_D,
+        'random_seed': config_f['random_seed']
     }
     # xapp_beam_management_bin_path
     config["xapp_beam_management_bin_path"] = f"\
@@ -56,12 +58,6 @@ def verify_conf(config_f: config_file_t) -> config_t:
     examples/xApp/oaibox/\
     {config['xapp_beam_management_bin']}\
     "
-    if config_f["beam_pattern"] == 'linear':
-        config["beam_pattern"] = BeamPattern.LINEAR
-    elif config_f["beam_pattern"] == 'fibonacci':
-        config["beam_pattern"] = BeamPattern.FIBONACCI
-    elif config_f["beam_pattern"] == 'circular':
-        config["beam_pattern"] = BeamPattern.CIRCULAR
     # verification logic is not implemented
     return config
         
@@ -81,10 +77,10 @@ def parse_beam_control_program_json(json_file: Path) -> list[beam_control_preloa
     except FileNotFoundError:
         raise FileNotFoundError(f"File {json_file} not found.")
     
-def parse_beam_template_json(json_file:Path) -> list[beam_template_t]:
+def parse_beam_template_json(json_file:Path) -> list[beam_template_file_t]:
     try:
         with json_file.open('r') as f:
-            loaded:list[beam_template_t] = []
+            loaded:list[beam_template_file_t] = []
             for line in f:
                 line = line.strip()
                 if not line or line.startswith("//"):
@@ -105,7 +101,7 @@ def arg_parser() -> config_t:
     conf_f = parse_conf(Path(args.conf))
     return verify_conf(conf_f)
 
-def get_beam_control_program_json(config: config_t) -> list[beam_control_program_t]:
+def get_beam_control_program_from_json(config: config_t) -> list[beam_control_program_t]:
     json_file = Path(config['beam_control_program_json'])
     preload = parse_beam_control_program_json(json_file)
     bcp_lst = []
@@ -121,3 +117,17 @@ def get_beam_control_program_json(config: config_t) -> list[beam_control_program
         }
         bcp_lst.append(bcp)
     return bcp_lst
+
+def get_beam_template_from_json(config: config_t) -> list[beam_template_t]:
+    json_file = Path(config['beam_template_file_json'])
+    preload = parse_beam_template_json(json_file)
+    btp_lst = []
+    for item in preload:
+        btp: beam_template_t = {
+            'type': BeamPattern.from_string(item['type']),
+            'start_point': item['start_point'],
+            'end_point': item['end_point'],
+            'steps': item['steps']
+        }
+        btp_lst.append(btp)
+    return btp_lst

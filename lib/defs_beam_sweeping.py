@@ -1,7 +1,9 @@
 from pytypes.type_beam import beam_control_program_t, beam_t, beam_sweeping_t
 from pytypes.type_beam import BeamControlMethod
 import random
+from copy import deepcopy
 
+# This function is deprecated and will be removed
 def def_lin_beam_sweeping(origin: dict[str, int], beams: list[dict[str, int]]) -> list[dict[str, int]]:
     """
     Generate a list of basic linear beams with sweeping angles.
@@ -10,6 +12,7 @@ def def_lin_beam_sweeping(origin: dict[str, int], beams: list[dict[str, int]]) -
     print(f"type(origin)={type(origin)}, type(beams)={type(beams)}")
     return [origin,] + beams + beams[-1::-1]  # Reverse the last beam to create a sweeping effect
 
+# This function is deprecated and will be removed
 def def_basic_lin_beam_sweeping(origin: dict[str, int], beams_list: list[list[dict[str, int]]]) -> list[dict[str, int]]:
     result:list[dict[str, int]] = []
     for beams in beams_list:
@@ -60,11 +63,10 @@ def write_random_sweep_program(start_index:int, end_index:int, step:int, reducti
         'duration': duration
     }
 
-def def_beam_sweeping(
+def create_beam_control_table(
         beam_table:list[beam_t],
         sweep_program_lst:list[beam_control_program_t],
-        origin_id:int=1,
-        random_state=None   # FIXME: no type annotation
+        seed:int|None=None
     ) -> list[beam_sweeping_t]:
     """
     input: 
@@ -127,7 +129,7 @@ def def_beam_sweeping(
             if selected_beam is None:
                 raise ValueError(f"Beam ID {start_id} not found in beam table.")
             beam_sweeping.append({
-                'id': origin_id,
+                'id': start_id,
                 'theta': selected_beam['theta'],
                 'phi': selected_beam['phi'],
                 'duration': duration
@@ -157,12 +159,12 @@ def def_beam_sweeping(
 
         # Random motion
         elif method == BeamControlMethod.RANDOM:
-            if random_state is not None:
-                random.setstate(random_state)
+            if seed is not None:
+                random.seed(seed)
             else:
                 # TODO: document the behavior
                 # FIXME: replace print to logging
-                print("Warning: random_state is None. The random sequence will not be reproducible.")
+                print("Warning: random seed is None. The random sequence will not be reproducible.")
             for _ in range(iters):
                 # Get the start and end beams
                 _garbage, start_idx = __search_beam(beam_table, start_id)
@@ -177,7 +179,8 @@ def def_beam_sweeping(
                 else:
                     end_idx += 1
                 src_table = beam_table[start_idx:end_idx]
-                random_seq = random.sample(src_table, len(src_table))
+                random_seq = deepcopy(src_table)
+                random.shuffle(random_seq)
                 for random_beam in random_seq:
                     beam_sweeping.append({
                         'id': random_beam['id'],

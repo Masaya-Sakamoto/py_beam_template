@@ -1,9 +1,9 @@
-from lib.make_beam_file import create_beam_table_csv, create_beam_table
-from lib.defs_beams import def_lin_beams, def_const_fibonacci_beams
-from lib.defs_beam_sweeping import def_lin_beam_sweeping
+from lib.make_beam_file import create_beam_table_csv, create_beam_table_csv_data
+from lib.defs_beams import def_const_linear_beams, def_const_fibonacci_beams
+from lib.defs_beam_sweeping import create_beam_control_table
 from lib.defs_beam_sweep_op import sequence_ops
-from pytypes.type_beam import BeamPattern, beam_control_program_t, beam_t, config_t
-from tools.parser import arg_parser
+from pytypes.type_beam import BeamPattern, beam_control_program_t, beam_t, config_t, beam_template_t
+from tools.parser import arg_parser, get_beam_template_from_json, get_beam_control_program_from_json
 from tools.softmodem_management import run_softmodem, kill_softmodem
 import shutil
 
@@ -20,7 +20,11 @@ import shutil
 # beam_switch_interval = 20
 
 
-def main(conf: config_t, program: list[beam_control_program_t]):
+def main(
+          config: config_t,
+          beam_template_lst:list[beam_template_t],
+          beam_control_program_lst: list[beam_control_program_t]
+):
     """
     1. beam_listsを作成 list[list[dict[str, int]]]
     2. beam_listsからbs_seqを作成
@@ -30,21 +34,48 @@ def main(conf: config_t, program: list[beam_control_program_t]):
     6. softmodem起動
     7. beam-sweepingを実行
     """
+
     # beam_tableの作成
     beam_table: list[beam_t] = []
-    beam_pattern = conf['beam_pattern']
-    if beam_pattern == BeamPattern.LINEAR:
-        pass
-    elif beam_pattern == BeamPattern.FIBONACCI:
-        pass
-    elif beam_pattern == BeamPattern.CIRCULAR:
-        pass
-    else:
-        raise ValueError(f"Unsupported beam pattern: {conf['beam_pattern']}")
+    for beam_template in beam_template_lst:
+            if beam_template['type'] == BeamPattern.LINEAR:
+                beam_table += def_const_linear_beams(
+                    beam_template['steps'],
+                    beam_template['start_point'],
+                    beam_template['end_point'],
+                    0,
+                    config['theta_max'],
+                    0,
+                    0,
+                    0,
+                    True
+                )
+            elif beam_template['type'] == BeamPattern.FIBONACCI:
+                beam_table += def_const_fibonacci_beams(
+                    beam_template['steps'],
+                    beam_template['start_point'],
+                    beam_template['end_point'],
+                    0,
+                    config['theta_max'],
+                    0,
+                    0,
+                    0,
+                    True
+                )
+            elif beam_template['type'] == BeamPattern.CIRCULAR:
+                pass
+            else:
+                raise ValueError(f"Unsupported beam pattern: {beam_template['type']}")
     
     # beam table csvファイルを作成
+    csv_data = create_beam_table_csv_data(beam_table)
+    create_beam_table_csv(csv_data, config['local_beam_table_csv_location'])
     
     # beam control tableを作成
+    beam_control_table = create_beam_control_table(
+        beam_table,
+        beam_control_program_lst,
+    )
 
     # softmodem起動
 
@@ -52,83 +83,8 @@ def main(conf: config_t, program: list[beam_control_program_t]):
 
     # 停止処理を書く
 
-def _main(args):
-    """
-    1. beam_listsを作成 list[list[dict[str, int]]]
-    2. beam_listsからbs_seqを作成
-    3. beam_listsからbeam_tableを作成 list[list[dict[str,str]]]
-    4. beam_tableからcsvを作成
-    5. csvを再配置
-    6. softmodem起動
-    7. beam-sweepingを実行
-    """
-    beams_lists = []
-    if args['beam_pattern'] == "linear":
-        # 1. beam_listsを作成
-        origin = {"id": 1, "theta": 0, "phi":0}
-        theta_min = args['theta_min']
-        theta_max = args['theta_max']
-        theta_step = args['theta_step']
-        pattern_rotation = args['pattern_rotation']
-        beams_size = (theta_max - theta_min) // theta_step + 1
-        beams_lists.append(def_lin_beams(
-            id_start=2,
-            theta_start_d=theta_min,
-            theta_end_d=theta_max,
-            pattern_rotation_d=pattern_rotation,
-            include_end=True,
-            step=theta_step))
-        beams_lists.append(def_lin_beams(
-            id_start=beams_size+2,
-            theta_start_d=theta_min,
-            theta_end_d=theta_max,
-            pattern_rotation_d=(pattern_rotation+180)%360,
-            include_end=True,
-            step=theta_step))
-
-        # 2. beam_listsからbs_seqを作成
-        
-        # 3. beam_listsからbeam_tableを作成
-        beam_table = create_beam_table([origin,] + beams_lists[0] + beams_lists[1])
-    elif args['beam_pattern'] == "fibonacci":
-        beams_lists.append(def_const_fibonacci_beams(
-            N = 64,
-            delta=0.0,
-            theta_max=args['theta_max'],
-            pattern_rotation=args['pattern_rotation'],
-        ))
-        beam_table = create_beam_table(beams_lists[0])
-
-    else:
-        raise ValueError(f"Unsupported beam pattern: {args['beam_pattern']}")
-    
-    if args['beam_pattern'] == "linear":
-        # beam_seq_table = def_basic_lin_beams_weeping(origin, beams_lists)
-        # beam_seq_tables = [def_lin_beam_sweeping(origin, beams) for beams in beams_lists]
-        # TODO: beam_seq_tablesと実行部分をidで参照するように変更する
-        
-
-    
-
-    # 4. beam_tableからcsvを作成
-    create_beam_table_csv(beam_table, local_beam_table_csv_location)
-
-    # 5. csvを再配置
-    shutil.copy(local_beam_table_csv_location, du_beam_csv_location)
-
-    # 6. softmodem起動
-    proc = run_softmodem()
-
-    # 7. beam-sweepingを実行
-    while True:
-        try:
-            input ("Press Enter to start beam sweeping or Ctrl+C to exit...")
-            sequence_ops(beam_seq_tables, args["xapp_beam_management_bin_path"], interval=args['beam_switch_interval'])
-        except KeyboardInterrupt:
-            print("中断されました。")
-            kill_softmodem(proc)
-            break
-
 if __name__ == "__main__":
-    args = arg_parser()
-    main(args)
+    config = arg_parser()
+    beam_template_lst = get_beam_template_from_json(config)
+    beam_control_program_lst = get_beam_control_program_from_json(config)
+    main(config, beam_template_lst, beam_control_program_lst)

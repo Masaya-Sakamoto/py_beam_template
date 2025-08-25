@@ -65,49 +65,11 @@ def write_random_sweep_program(start_index:int, end_index:int, step:int, reducti
 
 def create_beam_control_table(
         beam_table:list[beam_t],
-        sweep_program_lst:list[beam_control_program_t],
+        control_program_lst:list[beam_control_program_t],
         seed:int|None=None
     ) -> list[beam_sweeping_t]:
-    """
-    input: 
-        [
-            {"id": 1, "theta": 0, "phi": 0},
-            {"id": 1, "theta": 1, "phi": 0}, 
-            ...
-        ],  -- beam table
-        [
-            # initial state -- method #0
-            {'start_id':  1, 'end_id':  1, 'step': -1, 'method': 0, 'iters': -1, 'reduction': 0, 'duration': 10},
-
-            # motion stop -- method #0 -- 1
-            {'start_id':  1, 'end_id':  1, 'step': -1, 'method': 0, 'iters':  1, 'reduction': 1, 'duration': 10},
-            # Example: Reciprocating motion -- method #1 -- 2..26..2
-            {'start_id':  2, 'end_id': 26, 'step':  1, 'method': 1, 'iters':  1, 'reduction': 0, 'duration': 10},
-            {'start_id': 26, 'end_id':  2, 'step':  1, 'method': 1, 'iters':  1, 'reduction': 1, 'duration': 10},
-            # motion stop -- method #0 -- 1
-            {'start_id':  1, 'end_id':  1, 'step': -1, 'method': 0, 'iters':  1, 'reduction': 1, 'duration': 10},
-            # Resuming reciprocating motion -- method#1 -- 27..52..27
-            {'start_id': 27, 'end_id': 52, 'step':  1, 'method': 1, 'iters':  1, 'reduction': 1, 'duration': 10},
-            {'start_id': 52, 'end_id': 27, 'step':  1, 'method': 1, 'iters':  1, 'reduction': 1, 'duration': 10},
-            # motion stop -- method #0 -- 1
-            {'start_id':  1, 'end_id':  1, 'step': -1, 'method': 0, 'iters':  1, 'reduction': 1, 'duration': 10},
-
-            # Example: Random motion -- method #2 -- random([1:52]) x3
-            {'start_id':  1, 'end_id': 52, 'step': -1, 'method': 2, 'iters':  3, 'reduction': 0, 'duration':  5},
-
-            # termination -- method #0
-            {'start_id':  1, 'end_id':  1, 'step': -1, 'method': 0, 'iters': -1, 'reduction': 0, 'duration': 10}
-        ],  -- sweep_program_lst
-
-    output:
-        [
-            {"id": 1, "theta": 0, "phi": 0, "duration": 10},
-            {"id": 1, "theta": 1, "phi": 0, "duration": 10},
-            ...
-        ]
-    """
-    beam_sweeping = []
-    for program in sweep_program_lst:
+    beam_control = []
+    for program in control_program_lst:
         start_id = program['start_id']
         end_id = program['end_id']
         step = program['step']
@@ -121,14 +83,14 @@ def create_beam_control_table(
             # skip if reduction is True
             if (
                 reduction and \
-                len(beam_sweeping) > 0 and \
-                beam_sweeping[-1]['id'] == start_id
+                len(beam_control) > 0 and \
+                beam_control[-1]['id'] == start_id
             ):
                 continue
             selected_beam, _idx = __search_beam(beam_table, start_id)
             if selected_beam is None:
                 raise ValueError(f"Beam ID {start_id} not found in beam table.")
-            beam_sweeping.append({
+            beam_control.append({
                 'id': start_id,
                 'theta': selected_beam['theta'],
                 'phi': selected_beam['phi'],
@@ -143,14 +105,14 @@ def create_beam_control_table(
                     # skip if reduction is True
                     if (
                         reduction and \
-                        len(beam_sweeping) > 0 and \
-                        beam_sweeping[-1]['id'] == beam_id
+                        len(beam_control) > 0 and \
+                        beam_control[-1]['id'] == beam_id
                     ):
                         continue
                     selected_beam, _idx = __search_beam(beam_table, beam_id)
                     if selected_beam is None:
                         raise ValueError(f"Beam ID {beam_id} not found in beam table.")
-                    beam_sweeping.append({
+                    beam_control.append({
                         'id': selected_beam['id'],
                         'theta': selected_beam['theta'],
                         'phi': selected_beam['phi'],
@@ -182,7 +144,7 @@ def create_beam_control_table(
                 random_seq = deepcopy(src_table)
                 random.shuffle(random_seq)
                 for random_beam in random_seq:
-                    beam_sweeping.append({
+                    beam_control.append({
                         'id': random_beam['id'],
                         'theta': random_beam['theta'],
                         'phi': random_beam['phi'],
@@ -192,4 +154,4 @@ def create_beam_control_table(
         else:
             raise ValueError(f"Unknown method: {method}")
 
-    return beam_sweeping
+    return beam_control

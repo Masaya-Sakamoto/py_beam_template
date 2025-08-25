@@ -46,7 +46,9 @@ def verify_conf(config_f: config_file_t) -> config_t:
         'theta_max_d': config_f['theta_max_d'],
         'theta_min': config_f['theta_min_d']*PI/PI_D,
         'theta_max': config_f['theta_max_d']*PI/PI_D,
-        'pattern_rotation': config_f['pattern_rotation']*PI/PI_D,
+        'pattern_rotation': config_f['pattern_rotation_d']*PI/PI_D,
+        'center_angle_theta': config_f['center_angle_theta_d']*PI/PI_D,
+        'center_angle_phi': config_f['center_angle_phi_d']*PI/PI_D,
         'random_seed': config_f['random_seed']
     }
     # xapp_beam_management_bin_path

@@ -45,9 +45,9 @@ def main(
                     beam_template['end_point'],
                     0,
                     config['theta_max'],
-                    0,
-                    0,
-                    0,
+                    config['pattern_rotation'],
+                    config['center_angle_theta'],
+                    config['center_angle_phi'],
                     True
                 )
             elif beam_template['type'] == BeamPattern.FIBONACCI:
@@ -57,9 +57,9 @@ def main(
                     beam_template['end_point'],
                     0,
                     config['theta_max'],
-                    0,
-                    0,
-                    0,
+                    config['pattern_rotation'],
+                    config['center_angle_theta'],
+                    config['center_angle_phi'],
                     True
                 )
             elif beam_template['type'] == BeamPattern.CIRCULAR:
@@ -75,11 +75,13 @@ def main(
     beam_control_table = create_beam_control_table(
         beam_table,
         beam_control_program_lst,
+        seed=config['random_seed']
     )
 
     # softmodem起動
 
     # beam controlを実行
+    sequence_ops(beam_control_table, config['xapp_beam_management_bin'])
 
     # 停止処理を書く
 

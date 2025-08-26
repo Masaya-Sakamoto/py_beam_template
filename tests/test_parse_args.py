@@ -1,4 +1,5 @@
 from tools.parser import arg_parser, get_beam_template_from_json, get_beam_control_program_from_json
+from pytypes.type_beam import BeamPattern
 
 def test_arg_parser():
     # arg_parser()自体の動作検証
@@ -136,8 +137,6 @@ def test_arg_parser():
     assert config_lin_seq["pattern_rotation_angle"] == 0
     assert config_lin_seq["random_seed"] == 1234567890
 
-
-
 def test_get_beam_template_from_json():
     config_fib_rnd = arg_parser("tests/conf/fib_rnd/fib_rnd_conf.json")
     config_lin_rnd = arg_parser("tests/conf/lin_rnd/lin_rnd_conf.json")
@@ -151,6 +150,63 @@ def test_get_beam_template_from_json():
     beam_fib_rnd_lst = get_beam_template_from_json(config_fib_rnd)
     beam_lin_rnd_lst = get_beam_template_from_json(config_lin_rnd)
     beam_lin_seq_lst = get_beam_template_from_json(config_lin_seq)
+
+    # Test that the returned list: beam_fib_rnd_lst
+    assert len(beam_fib_rnd_lst) == 1
+    assert beam_fib_rnd_lst[0]['type'] == BeamPattern.FIBONACCI
+    assert beam_fib_rnd_lst[0]['start_point']['r'] == 0.0
+    assert beam_fib_rnd_lst[0]['start_point']['theta'] == 0.0
+    assert beam_fib_rnd_lst[0]['end_point']['r'] == -1
+    assert beam_fib_rnd_lst[0]['end_point']['theta'] == -1
+    assert beam_fib_rnd_lst[0]['steps'] == 64
+
+    # Test that the returned list: beam_lin_rnd_lst
+    assert len(beam_lin_rnd_lst) == 3
+    # First template: CONST type
+    assert beam_lin_rnd_lst[0]['type'] == BeamPattern.CONST
+    assert beam_lin_rnd_lst[0]['start_point']['r'] == 0.0
+    assert beam_lin_rnd_lst[0]['start_point']['theta'] == 0.0
+    assert beam_lin_rnd_lst[0]['end_point']['r'] == 0.0
+    assert beam_lin_rnd_lst[0]['end_point']['theta'] == 0.0
+    assert beam_lin_rnd_lst[0]['steps'] == -1
+    # Second template: LINEAR type
+    assert beam_lin_rnd_lst[1]['type'] == BeamPattern.LINEAR
+    assert beam_lin_rnd_lst[1]['start_point']['r'] == 0.04
+    assert beam_lin_rnd_lst[1]['start_point']['theta'] == 0.0
+    assert beam_lin_rnd_lst[1]['end_point']['r'] == 1.0
+    assert beam_lin_rnd_lst[1]['end_point']['theta'] == 0.0
+    assert beam_lin_rnd_lst[1]['steps'] == 25
+    # Third template: LINEAR type (opposite direction)
+    assert beam_lin_rnd_lst[2]['type'] == BeamPattern.LINEAR
+    assert beam_lin_rnd_lst[2]['start_point']['r'] == 0.04
+    assert beam_lin_rnd_lst[2]['start_point']['theta'] == 180.0
+    assert beam_lin_rnd_lst[2]['end_point']['r'] == 1.0
+    assert beam_lin_rnd_lst[2]['end_point']['theta'] == 180.0
+    assert beam_lin_rnd_lst[2]['steps'] == 25
+
+    # Test that the returned list: beam_lin_seq_lst
+    assert len(beam_lin_seq_lst) == 3
+    # First template: CONST type
+    assert beam_lin_seq_lst[0]['type'] == BeamPattern.CONST
+    assert beam_lin_seq_lst[0]['start_point']['r'] == 0.0
+    assert beam_lin_seq_lst[0]['start_point']['theta'] == 0.0
+    assert beam_lin_seq_lst[0]['end_point']['r'] == 0.0
+    assert beam_lin_seq_lst[0]['end_point']['theta'] == 0.0
+    assert beam_lin_seq_lst[0]['steps'] == -1
+    # Second template: LINEAR type
+    assert beam_lin_seq_lst[1]['type'] == BeamPattern.LINEAR
+    assert beam_lin_seq_lst[1]['start_point']['r'] == 0.04
+    assert beam_lin_seq_lst[1]['start_point']['theta'] == 0.0
+    assert beam_lin_seq_lst[1]['end_point']['r'] == 1.0
+    assert beam_lin_seq_lst[1]['end_point']['theta'] == 0.0
+    assert beam_lin_seq_lst[1]['steps'] == 25
+    # Third template: LINEAR type (opposite direction)
+    assert beam_lin_seq_lst[2]['type'] == BeamPattern.LINEAR
+    assert beam_lin_seq_lst[2]['start_point']['r'] == 0.04
+    assert beam_lin_seq_lst[2]['start_point']['theta'] == 180.0
+    assert beam_lin_seq_lst[2]['end_point']['r'] == 1.0
+    assert beam_lin_seq_lst[2]['end_point']['theta'] == 180.0
+    assert beam_lin_seq_lst[2]['steps'] == 25
 
 def test_get_beam_control_program_from_json():
     config_fib_rnd = arg_parser("tests/conf/fib_rnd/fib_rnd_conf.json")

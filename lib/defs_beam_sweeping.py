@@ -92,8 +92,8 @@ def create_beam_control_table(
                 raise ValueError(f"Beam ID {start_id} not found in beam table.")
             beam_control.append({
                 'id': start_id,
-                'theta': selected_beam['theta'],
-                'phi': selected_beam['phi'],
+                'theta': selected_beam['theta_d'],
+                'phi': selected_beam['phi_d'],
                 'duration': duration
             })
 
@@ -114,8 +114,8 @@ def create_beam_control_table(
                         raise ValueError(f"Beam ID {beam_id} not found in beam table.")
                     beam_control.append({
                         'id': selected_beam['id'],
-                        'theta': selected_beam['theta'],
-                        'phi': selected_beam['phi'],
+                        'theta': selected_beam['theta_d'],
+                        'phi': selected_beam['phi_d'],
                         'duration': duration
                     })
 
@@ -146,8 +146,8 @@ def create_beam_control_table(
                 for random_beam in random_seq:
                     beam_control.append({
                         'id': random_beam['id'],
-                        'theta': random_beam['theta'],
-                        'phi': random_beam['phi'],
+                        'theta': random_beam['theta_d'],
+                        'phi': random_beam['phi_d'],
                         'duration': duration
                     })
         

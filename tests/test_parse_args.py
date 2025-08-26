@@ -11,7 +11,7 @@ def test_arg_parser():
     config_lin_seq = arg_parser("tests/conf/lin_seq/lin_seq.conf.json")
 
     # 型チェック
-    assert type(config_fib_rnd["home_dir"]) == str
+    assert type(config_fib_rnd["home_dir"]) == str and config_fib_rnd["home_dir"] == "/home/user"
     assert type(config_fib_rnd["oai_dir"]) == str
     assert type(config_fib_rnd["exec_dir"]) == str
     assert type(config_fib_rnd["softmodem_bin"]) == str
@@ -27,12 +27,33 @@ def test_arg_parser():
     assert type(config_fib_rnd["theta_min_d"]) == int
     assert type(config_fib_rnd["theta_min"]) == float
     assert type(config_fib_rnd["theta_max"]) == float
-    assert type(config_fib_rnd["pattern_rotation"]) == float
+    assert type(config_fib_rnd["pattern_rotation_angle"]) == float
     assert type(config_fib_rnd["center_angle_theta"]) == float
     assert type(config_fib_rnd["center_angle_phi"]) == float
     assert type(config_fib_rnd["random_seed"]) == int
 
-    assert type(config_lin_rnd["home_dir"]) == str
+    # 値の確認 - fib_rnd_conf.json
+    assert config_fib_rnd["home_dir"] == "/home/user"
+    assert config_fib_rnd["oai_dir"] == "openairinterface5g"
+    assert config_fib_rnd["exec_dir"] == "cmake_targets/ran_build/build"
+    assert config_fib_rnd["softmodem_bin"] == "nr-softmodem"
+    assert config_fib_rnd["flexric_dir"] == "openair2/E2AP/flexric"
+    assert config_fib_rnd["flexric_build_dir"] == "build"
+    assert config_fib_rnd["xapp_beam_management_bin"] == "oaibox_xapp_beam_management"
+    assert config_fib_rnd["local_beam_table_csv_location"] == "./CustomBatchBeams.csv"
+    assert config_fib_rnd["du_beam_table_csv_location"] == "radio/USRP/setup/CustomBatchBeams.csv"
+    assert config_fib_rnd["beam_template_file_jsonl"] == "tests/conf/fib_rnd/beam_pattern.fib64.jsonl"
+    assert config_fib_rnd["beam_control_program_jsonl"] == "tests/conf/fib_rnd/beam_control_program.64.rnd.jsonl"
+    assert config_fib_rnd["theta_min_d"] == 0
+    assert config_fib_rnd["theta_max_d"] == 25
+    assert config_fib_rnd["pattern_rotation_angle"] == 0
+    assert config_fib_rnd["center_angle_theta"] == 0
+    assert config_fib_rnd["center_angle_phi"] == 0
+    assert config_fib_rnd["pattern_rotation_angle"] == 0
+    assert config_fib_rnd["random_seed"] == 1234567890
+
+    # 型チェック
+    assert type(config_lin_rnd["home_dir"]) == str and config_lin_rnd["home_dir"] == "/home/user"
     assert type(config_lin_rnd["oai_dir"]) == str
     assert type(config_lin_rnd["exec_dir"]) == str
     assert type(config_lin_rnd["softmodem_bin"]) == str
@@ -48,12 +69,33 @@ def test_arg_parser():
     assert type(config_lin_rnd["theta_min_d"]) == int
     assert type(config_lin_rnd["theta_min"]) == float
     assert type(config_lin_rnd["theta_max"]) == float
-    assert type(config_lin_rnd["pattern_rotation"]) == float
+    assert type(config_lin_rnd["pattern_rotation_angle"]) == float
     assert type(config_lin_rnd["center_angle_theta"]) == float
     assert type(config_lin_rnd["center_angle_phi"]) == float
     assert type(config_lin_rnd["random_seed"]) == int
 
-    assert type(config_lin_seq["home_dir"]) == str
+    # 値の確認 - lin_rnd_conf.json
+    assert config_lin_rnd["home_dir"] == "/home/user"
+    assert config_lin_rnd["oai_dir"] == "openairinterface5g"
+    assert config_lin_rnd["exec_dir"] == "cmake_targets/ran_build/build"
+    assert config_lin_rnd["softmodem_bin"] == "nr-softmodem"
+    assert config_lin_rnd["flexric_dir"] == "openair2/E2AP/flexric"
+    assert config_lin_rnd["flexric_build_dir"] == "build"
+    assert config_lin_rnd["xapp_beam_management_bin"] == "oaibox_xapp_beam_management"
+    assert config_lin_rnd["local_beam_table_csv_location"] == "./CustomBatchBeams.csv"
+    assert config_lin_rnd["du_beam_table_csv_location"] == "radio/USRP/setup/CustomBatchBeams.csv"
+    assert config_lin_rnd["beam_template_file_jsonl"] == "tests/conf/lin_rnd/beam_pattern.lin51.jsonl"
+    assert config_lin_rnd["beam_control_program_jsonl"] == "tests/conf/lin_rnd/beam_control_program.51.rnd.jsonl"
+    assert config_lin_rnd["theta_min_d"] == 0
+    assert config_lin_rnd["theta_max_d"] == 25
+    assert config_lin_rnd["pattern_rotation_angle"] == 0
+    assert config_lin_rnd["center_angle_theta"] == 0
+    assert config_lin_rnd["center_angle_phi"] == 0
+    assert config_lin_rnd["pattern_rotation_angle"] == 0
+    assert config_lin_rnd["random_seed"] == 1234567890
+
+    # 型チェック
+    assert type(config_lin_seq["home_dir"]) == str and config_lin_seq["home_dir"] == "/home/user"
     assert type(config_lin_seq["oai_dir"]) == str
     assert type(config_lin_seq["exec_dir"]) == str
     assert type(config_lin_seq["softmodem_bin"]) == str
@@ -69,10 +111,30 @@ def test_arg_parser():
     assert type(config_lin_seq["theta_min_d"]) == int
     assert type(config_lin_seq["theta_min"]) == float
     assert type(config_lin_seq["theta_max"]) == float
-    assert type(config_lin_seq["pattern_rotation"]) == float
+    assert type(config_lin_seq["pattern_rotation_angle"]) == float
     assert type(config_lin_seq["center_angle_theta"]) == float
     assert type(config_lin_seq["center_angle_phi"]) == float
     assert type(config_lin_seq["random_seed"]) == int
+
+    # 値の確認 - lin_seq.conf.json
+    assert config_lin_seq["home_dir"] == "/home/user"
+    assert config_lin_seq["oai_dir"] == "openairinterface5g"
+    assert config_lin_seq["exec_dir"] == "cmake_targets/ran_build/build"
+    assert config_lin_seq["softmodem_bin"] == "nr-softmodem"
+    assert config_lin_seq["flexric_dir"] == "openair2/E2AP/flexric"
+    assert config_lin_seq["flexric_build_dir"] == "build"
+    assert config_lin_seq["xapp_beam_management_bin"] == "oaibox_xapp_beam_management"
+    assert config_lin_seq["local_beam_table_csv_location"] == "./CustomBatchBeams.csv"
+    assert config_lin_seq["du_beam_table_csv_location"] == "radio/USRP/setup/CustomBatchBeams.csv"
+    assert config_lin_seq["beam_template_file_jsonl"] == "tests/conf/lin_seq/beam_pattern.lin51.jsonl"
+    assert config_lin_seq["beam_control_program_jsonl"] == "tests/conf/lin_seq/beam_control_program.bidirectional51.seq.jsonl"
+    assert config_lin_seq["theta_min_d"] == 0
+    assert config_lin_seq["theta_max_d"] == 25
+    assert config_lin_seq["pattern_rotation_angle"] == 0
+    assert config_lin_seq["center_angle_theta"] == 0
+    assert config_lin_seq["center_angle_phi"] == 0
+    assert config_lin_seq["pattern_rotation_angle"] == 0
+    assert config_lin_seq["random_seed"] == 1234567890
 
 
 

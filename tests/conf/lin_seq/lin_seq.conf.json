@@ -12,7 +12,7 @@
     "beam_control_program_jsonl": "tests/conf/lin_seq/beam_control_program.bidirectional51.seq.jsonl",
     "theta_min_d": 0,
     "theta_max_d": 25,
-    "pattern_rotation_angle": 0,
+    "pattern_rotation_angle_d": 0,
     "center_angle_theta_d": 0,
     "center_angle_phi_d":0,
     "pattern_rotation_d": 0,

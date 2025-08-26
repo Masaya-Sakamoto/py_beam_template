@@ -99,7 +99,7 @@ class config_file_t(TypedDict):
     beam_control_program_jsonl: str 
     theta_min_d: int
     theta_max_d: int
-    pattern_rotation_d: float
+    pattern_rotation_angle_d: float
     center_angle_theta_d: float
     center_angle_phi_d: float
     random_seed:int
@@ -121,7 +121,7 @@ class config_t(TypedDict):
     theta_min_d: int
     theta_min: float
     theta_max: float
-    pattern_rotation: float
+    pattern_rotation_angle: float
     center_angle_theta: float
     center_angle_phi: float
     random_seed:int

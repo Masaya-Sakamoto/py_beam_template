@@ -40,8 +40,8 @@ def verify_conf(config_f: config_file_t) -> config_t:
         'xapp_beam_management_bin_path': '',
         'local_beam_table_csv_location': config_f['local_beam_table_csv_location'],
         'du_beam_table_csv_location': config_f['du_beam_table_csv_location'],
-        'beam_template_file_json':config_f['beam_template_file_json'],
-        'beam_control_program_json': config_f['beam_control_program_json'],
+        'beam_template_file_jsonl':config_f['beam_template_file_jsonl'],
+        'beam_control_program_jsonl': config_f['beam_control_program_jsonl'],
         'theta_min_d': config_f['theta_min_d'],
         'theta_max_d': config_f['theta_max_d'],
         'theta_min': config_f['theta_min_d']*PI/PI_D,
@@ -111,7 +111,7 @@ def arg_parser(set_config_file_path:str|None=None) -> config_t:
     return verify_conf(conf_f)
 
 def get_beam_control_program_from_json(config: config_t) -> list[beam_control_program_t]:
-    json_file = Path(config['beam_control_program_json'])
+    json_file = Path(config['beam_control_program_jsonl'])
     preload = parse_beam_control_program_json(json_file)
     bcp_lst = []
     for item in preload:
@@ -128,7 +128,7 @@ def get_beam_control_program_from_json(config: config_t) -> list[beam_control_pr
     return bcp_lst
 
 def get_beam_template_from_json(config: config_t) -> list[beam_template_t]:
-    json_file = Path(config['beam_template_file_json'])
+    json_file = Path(config['beam_template_file_jsonl'])
     preload = parse_beam_template_json(json_file)
     btp_lst = []
     for item in preload:

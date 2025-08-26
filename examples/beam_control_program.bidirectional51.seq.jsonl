@@ -1,0 +1,18 @@
+// initial state -- method CONST
+{"start_id": 1, "end_id": 1, "step": -1, "method": "CONST", "iters": -1, "reduction": 0, "duration": 10}
+
+// motion stop -- method CONST -- 1
+{"start_id": 1, "end_id": 1, "step": -1, "method": "CONST", "iters": 1, "reduction": 0, "duration": 10}
+// Reciprocating motion -- method SEQUENTIAL -- 2..26..2
+{"start_id": 2, "end_id": 26, "step": 1, "method": "SEQUENTIAL", "iters": 1, "reduction": 0, "duration": 10}
+{"start_id": 26, "end_id": 2, "step": 1, "method": "SEQUENTIAL", "iters": 1, "reduction": 0, "duration": 10}
+// motion stop -- method CONST -- 1
+{"start_id": 1, "end_id": 1, "step": -1, "method": "CONST", "iters": 1, "reduction": 0, "duration": 10}
+// Resuming reciprocating motion -- methodSEQUENTIAL -- 27..52..27
+{"start_id": 27, "end_id": 51, "step": 1, "method": "SEQUENTIAL", "iters": 1, "reduction": 0, "duration": 10}
+{"start_id": 51, "end_id": 27, "step": 1, "method": "SEQUENTIAL", "iters": 1, "reduction": 0, "duration": 10}
+// motion stop -- method CONST -- 1
+{"start_id": 1, "end_id": 1, "step": -1, "method": "CONST", "iters": 1, "reduction": 0, "duration": 10}
+
+// initial state -- method CONST
+{"start_id": 1, "end_id": 1, "step": -1, "method": "CONST", "iters": -1, "reduction": 0, "duration": 5}

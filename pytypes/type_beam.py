@@ -95,8 +95,8 @@ class config_file_t(TypedDict):
     xapp_beam_management_bin: str
     local_beam_table_csv_location: str
     du_beam_table_csv_location: str
-    beam_template_file_json: str
-    beam_control_program_json: str 
+    beam_template_file_jsonl: str
+    beam_control_program_jsonl: str 
     theta_min_d: int
     theta_max_d: int
     pattern_rotation_d: float
@@ -115,8 +115,8 @@ class config_t(TypedDict):
     xapp_beam_management_bin_path: str
     local_beam_table_csv_location: str
     du_beam_table_csv_location: str
-    beam_template_file_json: str
-    beam_control_program_json: str # beam_control_program_t
+    beam_template_file_jsonl: str
+    beam_control_program_jsonl: str # beam_control_program_t
     theta_max_d: int
     theta_min_d: int
     theta_min: float

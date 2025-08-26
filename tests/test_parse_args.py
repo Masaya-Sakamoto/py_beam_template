@@ -1,5 +1,5 @@
 from tools.parser import arg_parser, get_beam_template_from_json, get_beam_control_program_from_json
-from pytypes.type_beam import BeamPattern
+from pytypes.type_beam import BeamPattern, BeamControlMethod
 
 def test_arg_parser():
     # arg_parser()自体の動作検証
@@ -221,3 +221,139 @@ def test_get_beam_control_program_from_json():
     beam_control_program_fib_rnd_lst = get_beam_control_program_from_json(config_fib_rnd)
     beam_control_program_lin_rnd_lst = get_beam_control_program_from_json(config_lin_rnd)
     beam_control_program_lin_seq_lst = get_beam_control_program_from_json(config_lin_seq)
+
+    # Verify return type is a list of beam_control_program_t
+    assert isinstance(beam_control_program_fib_rnd_lst, list)
+    for item in beam_control_program_fib_rnd_lst:
+        assert isinstance(item, dict)
+        assert 'start_id' in item
+        assert 'end_id' in item
+        assert 'step' in item
+        assert 'method' in item
+        assert 'iters' in item
+        assert 'reduction' in item
+        assert 'duration' in item
+    
+    # Verify the first item matches expected values
+    expected_first = {
+        'start_id': 1,
+        'end_id': 1,
+        'step': -1,
+        'method': BeamControlMethod.CONST,
+        'iters': -1,
+        'reduction': 0,
+        'duration': 10
+    }
+    
+    assert beam_control_program_fib_rnd_lst[0] == expected_first
+    
+    # Verify the third item (RANDOM method) matches expected values
+    expected_third = {
+        'start_id': 1,
+        'end_id': 64,
+        'step': -1,
+        'method': BeamControlMethod.RANDOM,
+        'iters': 3,
+        'reduction': 0,
+        'duration': 5
+    }
+    
+    assert beam_control_program_fib_rnd_lst[2] == expected_third
+    
+    # Verify total number of items
+    assert len(beam_control_program_fib_rnd_lst) == 5
+
+    # Verify return type is a list of beam_control_program_t
+    assert isinstance(beam_control_program_lin_rnd_lst, list)
+    for item in beam_control_program_lin_rnd_lst:
+        assert isinstance(item, dict)
+        assert 'start_id' in item
+        assert 'end_id' in item
+        assert 'step' in item
+        assert 'method' in item
+        assert 'iters' in item
+        assert 'reduction' in item
+        assert 'duration' in item
+    
+    # Verify the first item matches expected values
+    expected_first = {
+        'start_id': 1,
+        'end_id': 1,
+        'step': -1,
+        'method': BeamControlMethod.CONST,
+        'iters': -1,
+        'reduction': 0,
+        'duration': 10
+    }
+    
+    assert beam_control_program_lin_rnd_lst[0] == expected_first
+    
+    # Verify the third item (RANDOM method) matches expected values
+    expected_third = {
+        'start_id': 1,
+        'end_id': 51,
+        'step': -1,
+        'method': BeamControlMethod.RANDOM,
+        'iters': 3,
+        'reduction': 0,
+        'duration': 5
+    }
+    
+    assert beam_control_program_lin_rnd_lst[2] == expected_third
+    
+    # Verify total number of items
+    assert len(beam_control_program_lin_rnd_lst) == 5
+
+     # Verify return type is a list of beam_control_program_t
+    assert isinstance(beam_control_program_lin_seq_lst, list)
+    for item in beam_control_program_lin_seq_lst:
+        assert isinstance(item, dict)
+        assert 'start_id' in item
+        assert 'end_id' in item
+        assert 'step' in item
+        assert 'method' in item
+        assert 'iters' in item
+        assert 'reduction' in item
+        assert 'duration' in item
+    
+    # Verify the first item matches expected values
+    expected_first = {
+        'start_id': 1,
+        'end_id': 1,
+        'step': -1,
+        'method': BeamControlMethod.CONST,
+        'iters': -1,
+        'reduction': 0,
+        'duration': 10
+    }
+    
+    assert beam_control_program_lin_seq_lst[0] == expected_first
+    
+    # Verify the third item (SEQUENTIAL method) matches expected values
+    expected_third = {
+        'start_id': 2,
+        'end_id': 26,
+        'step': 1,
+        'method': BeamControlMethod.SEQUENTIAL,
+        'iters': 1,
+        'reduction': 0,
+        'duration': 10
+    }
+    
+    assert beam_control_program_lin_seq_lst[2] == expected_third
+    
+    # Verify the fourth item (reverse SEQUENTIAL method) matches expected values
+    expected_fourth = {
+        'start_id': 26,
+        'end_id': 2,
+        'step': 1,
+        'method': BeamControlMethod.SEQUENTIAL,
+        'iters': 1,
+        'reduction': 0,
+        'duration': 10
+    }
+    
+    assert beam_control_program_lin_seq_lst[3] == expected_fourth
+    
+    # Verify total number of items
+    assert len(beam_control_program_lin_seq_lst) == 9

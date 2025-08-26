@@ -4,7 +4,7 @@ from typing import Any
 from pytypes.type_beam import beam_control_preload_t, config_file_t, config_t
 from pytypes.type_beam import beam_control_program_t, beam_template_t, beam_template_file_t
 from pytypes.type_beam import BeamPattern, BeamControlMethod
-from pytypes.unit import PI, PI_D
+from pytypes.unit import PI, PI_D, unit_disc_coord_file_t, unit_disc_coord_t
 import json
 from pathlib import Path
 
@@ -127,6 +127,12 @@ def get_beam_control_program_from_json(config: config_t) -> list[beam_control_pr
         bcp_lst.append(bcp)
     return bcp_lst
 
+def data_converter_for_file_unitdisc(point: unit_disc_coord_file_t) -> unit_disc_coord_t:
+    return {
+        'r': point['r'],
+        'theta': point['theta_d'] * PI / PI_D
+    }
+
 def get_beam_template_from_json(config: config_t) -> list[beam_template_t]:
     json_file = Path(config['beam_template_file_jsonl'])
     preload = parse_beam_template_json(json_file)
@@ -134,8 +140,8 @@ def get_beam_template_from_json(config: config_t) -> list[beam_template_t]:
     for item in preload:
         btp: beam_template_t = {
             'type': BeamPattern.from_string(item['type']),
-            'start_point': item['start_point'],
-            'end_point': item['end_point'],
+            'start_point': data_converter_for_file_unitdisc(item['start_point']),
+            'end_point': data_converter_for_file_unitdisc(item['end_point']),
             'steps': item['steps']
         }
         btp_lst.append(btp)

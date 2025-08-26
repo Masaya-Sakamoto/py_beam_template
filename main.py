@@ -1,5 +1,5 @@
 from lib.make_beam_file import create_beam_table_csv, create_beam_table_csv_data
-from lib.defs_beams import def_const_linear_beams, def_const_fibonacci_beams
+from lib.defs_beams import def_const_constant_beam, def_const_linear_beams, def_const_fibonacci_beams, reset_beam_table_id
 from lib.defs_beam_sweeping import create_beam_control_table
 from lib.defs_beam_sweep_op import sequence_ops
 from pytypes.type_beam import BeamPattern, beam_control_program_t, beam_t, config_t, beam_template_t
@@ -38,14 +38,26 @@ def main(
     # beam_tableの作成
     beam_table: list[beam_t] = []
     for beam_template in beam_template_lst:
-            if beam_template['type'] == BeamPattern.LINEAR:
+            if beam_template['type'] == BeamPattern.CONST:
+                beam_table += def_const_constant_beam(
+                    1,
+                    beam_template['start_point'],
+                    beam_template['end_point'],
+                    0,
+                    config['theta_max'],
+                    config['pattern_rotation_angle'],
+                    config['center_angle_theta'],
+                    config['center_angle_phi'],
+                    True
+                )
+            elif beam_template['type'] == BeamPattern.LINEAR:
                 beam_table += def_const_linear_beams(
                     beam_template['steps'],
                     beam_template['start_point'],
                     beam_template['end_point'],
                     0,
                     config['theta_max'],
-                    config['pattern_rotation'],
+                    config['pattern_rotation_angle'],
                     config['center_angle_theta'],
                     config['center_angle_phi'],
                     True
@@ -57,7 +69,7 @@ def main(
                     beam_template['end_point'],
                     0,
                     config['theta_max'],
-                    config['pattern_rotation'],
+                    config['pattern_rotation_angle'],
                     config['center_angle_theta'],
                     config['center_angle_phi'],
                     True
@@ -66,6 +78,7 @@ def main(
                 pass
             else:
                 raise ValueError(f"Unsupported beam pattern: {beam_template['type']}")
+    beam_table = reset_beam_table_id(beam_table)
     
     # beam table csvファイルを作成
     csv_data = create_beam_table_csv_data(beam_table)

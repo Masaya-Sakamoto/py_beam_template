@@ -1,12 +1,12 @@
 from typing import TypedDict
 from enum import Enum, auto
-from pytypes.unit import dB_t, unit_disc_coord_t
+from pytypes.unit import dB_t, unit_disc_coord_file_t, unit_disc_coord_t
 
 class beam_t(TypedDict):
     id: int
     dB: dB_t
-    theta: int
-    phi: int
+    theta_d: int
+    phi_d: int
 
 class BeamControlMethod(Enum):
     UNDEFINED = auto()
@@ -128,8 +128,8 @@ class config_t(TypedDict):
 
 class beam_template_file_t(TypedDict):
     type: str
-    start_point: unit_disc_coord_t
-    end_point: unit_disc_coord_t
+    start_point: unit_disc_coord_file_t
+    end_point: unit_disc_coord_file_t
     steps: int
 
 class beam_template_t(TypedDict):

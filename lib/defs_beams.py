@@ -1,8 +1,9 @@
 import math
 from pytypes.type_beam import beam_t
-from pytypes.unit import unit_disc_coord_t, map[unit_disc_coord_t], unit_disc_coord_generator
-from pytypes.unit import unit_hemisphere_coord_t, map[unit_hemisphere_coord_t]
+from pytypes.unit import unit_disc_coord_t, unit_disc_coord_generator
+from pytypes.unit import unit_hemisphere_coord_t
 from pytypes.unit import PI, PI_D
+from collections.abc import Iterator
 
 # This function is deprecated and will be removed
 def def_lin_beams(id_start:int, theta_start_d:int, theta_end_d:int, pattern_rotation_d:int, include_end:bool, step:int=1) -> list[beam_t]:
@@ -14,8 +15,8 @@ def def_lin_beams(id_start:int, theta_start_d:int, theta_end_d:int, pattern_rota
     return [{
         "id": id_start + i,
         "dB": 0,  # Default dB value, can be modified later 
-        "theta": theta_d,
-        "phi": pattern_rotation_d
+        "theta_d": theta_d,
+        "phi_d": pattern_rotation_d
     } for i, theta_d in enumerate(range(theta_start_d, last_theta, step))]
 
 def __linspace_on_unitdisc(
@@ -71,14 +72,14 @@ def __linspace_on_unitdisc(
             y_i = start_y + i * step_y
             yield {"r": math.hypot(x_i, y_i), "theta": math.atan2(y_i, x_i)}
 
-def __snap_integer_angle(float_angle:float) -> int:
-    return int(round(float_angle * PI_D / PI, 0) * PI / PI_D)
+def __snap_integer_angle(float_angle:float) -> float:
+    return float(round(float_angle * PI_D / PI, 0) * PI / PI_D)
 
 def __golden_angle():
     phi = (1 + math.sqrt(5)) / 2
     return 2 * PI / (phi**2)
 
-def __phyllotaxis_points(N:int, delta:float) -> map[unit_disc_coord_t]:
+def __phyllotaxis_points(N:int, delta:float) -> Iterator[unit_disc_coord_t]:
     """
     平面上のphyllotaxis点を (r, theta) で返す。
     半径は単位円内に正規化。
@@ -88,7 +89,7 @@ def __phyllotaxis_points(N:int, delta:float) -> map[unit_disc_coord_t]:
     ga = __golden_angle()
     return map(lambda n: {"r": math.sqrt((n + delta) / N), "theta": n * ga}, n)
 
-def __map_to_hemisphere_coords(unitdisc_coords:map[unit_disc_coord_t]) -> map[unit_hemisphere_coord_t]:
+def __map_to_hemisphere_coords(unitdisc_coords:Iterator[unit_disc_coord_t]) -> Iterator[unit_hemisphere_coord_t]:
     unit_hemisphere_coords:map[unit_hemisphere_coord_t] = map(lambda udc: {
         "theta": math.acos(1 - udc["r"]**2),
         "phi": udc["theta"]
@@ -96,13 +97,13 @@ def __map_to_hemisphere_coords(unitdisc_coords:map[unit_disc_coord_t]) -> map[un
     return unit_hemisphere_coords
 
 def __mod_theta_phi(
-        unit_hemisphere_coords:map[unit_hemisphere_coord_t],
+        unit_hemisphere_coords:Iterator[unit_hemisphere_coord_t],
         theta_max:float|None=None,
         pattern_rotation:float|None=None,
         center_theta:float|None=None,
         center_phi:float|None=None,
         is_int_val:bool|None=False,
-    ) -> map[unit_hemisphere_coord_t]:
+    ) -> Iterator[unit_hemisphere_coord_t]:
     if pattern_rotation:
         unit_hemisphere_coords = map(lambda uhc: {
             "theta": uhc["theta"],
@@ -151,13 +152,12 @@ def __linear_point_on_unitdisc(
         end_point: unit_disc_coord_t,
         N: int,
         include_end: bool
-) -> map[unit_disc_coord_t]:
+) -> Iterator[unit_disc_coord_t]:
     udc = __linspace_on_unitdisc(start_point, end_point, num=N, include_end=include_end)
     return map(lambda lc: {
         "r": lc["r"],
         "theta": lc["theta"]
     }, udc)
-
 
 def __linear_point_on_hemisphere(
         N:int,
@@ -168,7 +168,7 @@ def __linear_point_on_hemisphere(
         center_angle_theta:float,
         center_angle_phi:float,
         is_int_val:bool
-    ) -> map[unit_hemisphere_coord_t]:
+    ) -> Iterator[unit_hemisphere_coord_t]:
     udc = __linear_point_on_unitdisc(
         start_point=start_point,
         end_point=end_point,
@@ -195,7 +195,7 @@ def __phyllotaxis_point_on_hemisphere(
         pattern_rotation:float,
         center_angle_theta:float,
         center_angle_phi:float,
-        is_int_val:bool) -> map[unit_hemisphere_coord_t]:
+        is_int_val:bool) -> Iterator[unit_hemisphere_coord_t]:
     """
     1. phyllotaxis点を単位円盤に生成する ... __phyllotaxis_points
     2. それを当面積写像で半球にマッピングする
@@ -214,6 +214,35 @@ def __phyllotaxis_point_on_hemisphere(
         center_phi=center_angle_phi,
         is_int_val=is_int_val)
     return uhc
+
+def def_const_constant_beam(
+        _N: int,
+        start_point:unit_disc_coord_t,
+        _end_point:unit_disc_coord_t,
+        constant_dB:int,
+        theta_max:float,
+        pattern_rotation:float,
+        center_angle_theta:float,
+        center_angle_phi:float,
+        is_int_val:bool
+    ) -> list[beam_t]:
+    uhc =  __linear_point_on_hemisphere(
+        N=1,
+        start_point=start_point,
+        end_point=start_point,
+        theta_max=theta_max,
+        pattern_rotation=pattern_rotation,
+        center_angle_theta=center_angle_theta,
+        center_angle_phi=center_angle_phi,
+        is_int_val=is_int_val
+    )
+    return [
+        {
+            "id": i,
+            "dB": constant_dB,
+            "theta_d": int(item["theta"] * PI_D / PI),
+            "phi_d": int(item["phi"] * PI_D / PI)
+        } for i, item in enumerate(uhc)]
 
 def def_const_linear_beams(
         N: int,
@@ -241,8 +270,8 @@ def def_const_linear_beams(
         {
             "id": i,
             "dB": constant_dB,
-            "theta": int(item["theta"] * PI_D / PI),
-            "phi": int(item["phi"] * PI_D / PI)
+            "theta_d": int(item["theta"] * PI_D / PI),
+            "phi_d": int(item["phi"] * PI_D / PI)
         } for i, item in enumerate(uhc)]
 
 def def_const_fibonacci_beams(
@@ -273,6 +302,11 @@ def def_const_fibonacci_beams(
         {
             "id": i,
             "dB": constant_dB,
-            "theta": int(item["theta"] * PI_D / PI),
-            "phi": int(item["phi"] * PI_D / PI)
+            "theta_d": int(item["theta"] * PI_D / PI),
+            "phi_d": int(item["phi"] * PI_D / PI)
         } for i, item in enumerate(uhc)]
+
+def reset_beam_table_id(beam_table:list[beam_t]) -> list[beam_t]:
+    for i, beam in enumerate(beam_table):
+        beam['id'] = i+1
+    return beam_table

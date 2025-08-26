@@ -6,6 +6,10 @@ PI_D = 180
 
 dB_t = int
 
+class unit_disc_coord_file_t(TypedDict):
+    r: float
+    theta_d: int
+
 class unit_disc_coord_t(TypedDict):
     r: float
     theta: float

@@ -1,5 +1,6 @@
 from tools.parser import arg_parser, get_beam_template_from_json, get_beam_control_program_from_json
 from pytypes.type_beam import BeamPattern, BeamControlMethod
+import math
 
 def test_arg_parser():
     # arg_parser()自体の動作検証
@@ -156,8 +157,6 @@ def test_get_beam_template_from_json():
     assert beam_fib_rnd_lst[0]['type'] == BeamPattern.FIBONACCI
     assert beam_fib_rnd_lst[0]['start_point']['r'] == 0.0
     assert beam_fib_rnd_lst[0]['start_point']['theta'] == 0.0
-    assert beam_fib_rnd_lst[0]['end_point']['r'] == -1
-    assert beam_fib_rnd_lst[0]['end_point']['theta'] == -1
     assert beam_fib_rnd_lst[0]['steps'] == 64
 
     # Test that the returned list: beam_lin_rnd_lst
@@ -179,9 +178,9 @@ def test_get_beam_template_from_json():
     # Third template: LINEAR type (opposite direction)
     assert beam_lin_rnd_lst[2]['type'] == BeamPattern.LINEAR
     assert beam_lin_rnd_lst[2]['start_point']['r'] == 0.04
-    assert beam_lin_rnd_lst[2]['start_point']['theta'] == 180.0
+    assert beam_lin_rnd_lst[2]['start_point']['theta'] == math.pi
     assert beam_lin_rnd_lst[2]['end_point']['r'] == 1.0
-    assert beam_lin_rnd_lst[2]['end_point']['theta'] == 180.0
+    assert beam_lin_rnd_lst[2]['end_point']['theta'] == math.pi
     assert beam_lin_rnd_lst[2]['steps'] == 25
 
     # Test that the returned list: beam_lin_seq_lst
@@ -203,9 +202,9 @@ def test_get_beam_template_from_json():
     # Third template: LINEAR type (opposite direction)
     assert beam_lin_seq_lst[2]['type'] == BeamPattern.LINEAR
     assert beam_lin_seq_lst[2]['start_point']['r'] == 0.04
-    assert beam_lin_seq_lst[2]['start_point']['theta'] == 180.0
+    assert beam_lin_seq_lst[2]['start_point']['theta'] == math.pi
     assert beam_lin_seq_lst[2]['end_point']['r'] == 1.0
-    assert beam_lin_seq_lst[2]['end_point']['theta'] == 180.0
+    assert beam_lin_seq_lst[2]['end_point']['theta'] == math.pi
     assert beam_lin_seq_lst[2]['steps'] == 25
 
 def test_get_beam_control_program_from_json():

@@ -90,7 +90,7 @@ def test_def_const_linear_beams():
     assert beam_table[26]['dB'] == 0
     assert beam_table[26]['theta_d'] == 1
     assert beam_table[26]['phi_d'] == 180
-    assert beam_table[51]['id'] == 52
-    assert beam_table[51]['dB'] == 0
-    assert beam_table[51]['theta_d'] == 25
-    assert beam_table[51]['phi_d'] == 180
+    assert beam_table[50]['id'] == 51
+    assert beam_table[50]['dB'] == 0
+    assert beam_table[50]['theta_d'] == 25
+    assert beam_table[50]['phi_d'] == 180

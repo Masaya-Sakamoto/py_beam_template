@@ -1,0 +1,14 @@
+// initial state -- method CONST
+{"start_id": 1, "end_id": 1, "step": -1, "method": "CONST", "iters": -1, "reduction": 0, "duration": 10}
+
+// motion stop -- method CONST -- 1
+{"start_id": 1, "end_id": 1, "step": -1, "method": "CONST", "iters": 1, "reduction": 0, "duration": 10}
+
+// Random motion -- method #2 -- random([1:52]) x3
+{"start_id": 1, "end_id": 64, "step": -1, "method": "RANDOM", "iters": 3, "reduction": 0, "duration": 5}
+
+// motion stop -- method CONST -- 1
+{"start_id": 1, "end_id": 1, "step": -1, "method": "CONST", "iters": 1, "reduction": 0, "duration": 10}
+
+// initial state -- method CONST
+{"start_id": 1, "end_id": 1, "step": -1, "method": "CONST", "iters": -1, "reduction": 0, "duration": 5}

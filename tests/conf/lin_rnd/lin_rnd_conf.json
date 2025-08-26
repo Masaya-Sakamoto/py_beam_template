@@ -1,0 +1,21 @@
+{
+    "home_dir": "/home/user",
+    "oai_dir": "openairinterface5g",
+    "exec_dir": "cmake_targets/ran_build/build",
+    "softmodem_bin": "nr-softmodem",
+    "flexric_dir": "openair2/E2AP/flexric",
+    "flexric_build_dir": "build",
+    "xapp_beam_management_bin": "oaibox_xapp_beam_management",
+    "local_beam_table_csv_location": "./CustomBatchBeams.csv",
+    "du_beam_table_csv_location": "radio/USRP/setup/CustomBatchBeams.csv",
+    "beam_template_file_jsonl": "tests/conf/lin_rnd/beam_pattern.lin51.jsonl",
+    "beam_control_program_json": "tests/conf/lin_rnd/beam_control_program.51.rnd.jsonl",
+    "theta_min": 0,
+    "theta_max": 25,
+    "theta_step": 1,
+    "pattern_rotation_angle": 0,
+    "center_angle_theta_d": 0,
+    "center_angle_phi_d":0,
+    "pattern_rotation_d": 0,
+    "random_seed": 1234567890
+}

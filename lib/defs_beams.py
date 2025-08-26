@@ -1,7 +1,7 @@
 import math
 from pytypes.type_beam import beam_t
-from pytypes.unit import unit_disc_coord_t, map_unit_disc_coord_t, unit_disc_coord_generator
-from pytypes.unit import unit_hemisphere_coord_t, map_unit_hemisphere_coord_t
+from pytypes.unit import unit_disc_coord_t, map[unit_disc_coord_t], unit_disc_coord_generator
+from pytypes.unit import unit_hemisphere_coord_t, map[unit_hemisphere_coord_t]
 from pytypes.unit import PI, PI_D
 
 # This function is deprecated and will be removed
@@ -78,7 +78,7 @@ def __golden_angle():
     phi = (1 + math.sqrt(5)) / 2
     return 2 * PI / (phi**2)
 
-def __phyllotaxis_points(N:int, delta:float) -> map_unit_disc_coord_t:
+def __phyllotaxis_points(N:int, delta:float) -> map[unit_disc_coord_t]:
     """
     平面上のphyllotaxis点を (r, theta) で返す。
     半径は単位円内に正規化。
@@ -88,21 +88,21 @@ def __phyllotaxis_points(N:int, delta:float) -> map_unit_disc_coord_t:
     ga = __golden_angle()
     return map(lambda n: {"r": math.sqrt((n + delta) / N), "theta": n * ga}, n)
 
-def __map_to_hemisphere_coords(unitdisc_coords:map_unit_disc_coord_t) -> map_unit_hemisphere_coord_t:
-    unit_hemisphere_coords:map_unit_hemisphere_coord_t = map(lambda udc: {
+def __map_to_hemisphere_coords(unitdisc_coords:map[unit_disc_coord_t]) -> map[unit_hemisphere_coord_t]:
+    unit_hemisphere_coords:map[unit_hemisphere_coord_t] = map(lambda udc: {
         "theta": math.acos(1 - udc["r"]**2),
         "phi": udc["theta"]
     }, unitdisc_coords)
     return unit_hemisphere_coords
 
 def __mod_theta_phi(
-        unit_hemisphere_coords:map_unit_hemisphere_coord_t,
+        unit_hemisphere_coords:map[unit_hemisphere_coord_t],
         theta_max:float|None=None,
         pattern_rotation:float|None=None,
         center_theta:float|None=None,
         center_phi:float|None=None,
         is_int_val:bool|None=False,
-    ) -> map_unit_hemisphere_coord_t:
+    ) -> map[unit_hemisphere_coord_t]:
     if pattern_rotation:
         unit_hemisphere_coords = map(lambda uhc: {
             "theta": uhc["theta"],
@@ -151,7 +151,7 @@ def __linear_point_on_unitdisc(
         end_point: unit_disc_coord_t,
         N: int,
         include_end: bool
-) -> map_unit_disc_coord_t:
+) -> map[unit_disc_coord_t]:
     udc = __linspace_on_unitdisc(start_point, end_point, num=N, include_end=include_end)
     return map(lambda lc: {
         "r": lc["r"],
@@ -168,7 +168,7 @@ def __linear_point_on_hemisphere(
         center_angle_theta:float,
         center_angle_phi:float,
         is_int_val:bool
-    ) -> map_unit_hemisphere_coord_t:
+    ) -> map[unit_hemisphere_coord_t]:
     udc = __linear_point_on_unitdisc(
         start_point=start_point,
         end_point=end_point,
@@ -195,7 +195,7 @@ def __phyllotaxis_point_on_hemisphere(
         pattern_rotation:float,
         center_angle_theta:float,
         center_angle_phi:float,
-        is_int_val:bool) -> map_unit_hemisphere_coord_t:
+        is_int_val:bool) -> map[unit_hemisphere_coord_t]:
     """
     1. phyllotaxis点を単位円盤に生成する ... __phyllotaxis_points
     2. それを当面積写像で半球にマッピングする

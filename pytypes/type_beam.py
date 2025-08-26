@@ -1,6 +1,6 @@
 from typing import TypedDict
 from enum import Enum, auto
-from unit import dB_t, unit_disc_coord_t
+from pytypes.unit import dB_t, unit_disc_coord_t
 
 class beam_t(TypedDict):
     id: int

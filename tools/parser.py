@@ -121,7 +121,7 @@ def get_beam_control_program_from_json(config: config_t) -> list[beam_control_pr
             'step': item['step'],
             'method': BeamControlMethod.from_string(item['method']),
             'iters': item['iters'],
-            'reduction': item['reduction'],
+            'reduction': bool(item['reduction']),
             'duration': item['duration']
         }
         bcp_lst.append(bcp)

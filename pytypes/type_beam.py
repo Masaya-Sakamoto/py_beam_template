@@ -68,14 +68,14 @@ class beam_control_program_t(TypedDict):
     step: int
     method: BeamControlMethod
     iters: int
-    reduction: int
+    reduction: bool
     duration: int
 
 class beam_sweeping_t(TypedDict):
     id: int
     dB: dB_t
-    theta: int
-    phi: int
+    theta_d: int
+    phi_d: int
     duration: int
 
 class beam_str_t(TypedDict):

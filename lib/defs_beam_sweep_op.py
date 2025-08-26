@@ -30,7 +30,7 @@ def sequence_ops(beam_sweep_tables: list[beam_sweeping_t], program_path:str) -> 
     for beam in beam_sweep_tables:
         txBeamId = beam["id"]
         rxBeamId = beam["id"]
-        print(f"Executing beam management for BeamId: {txBeamId}, Theta: {beam['theta']}, Phi: {beam['phi']} at {datetime.now()}")
+        print(f"Executing beam management for BeamId: {txBeamId}, Theta: {beam['theta_d']}, Phi: {beam['phi_d']} at {datetime.now()}")
         if not oai_xapp_beam_management_handler(txBeamId, rxBeamId, program_path):
             return False
         time.sleep(beam['duration'])

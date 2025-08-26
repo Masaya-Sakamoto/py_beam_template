@@ -68,7 +68,7 @@ def create_beam_control_table(
         control_program_lst:list[beam_control_program_t],
         seed:int|None=None
     ) -> list[beam_sweeping_t]:
-    beam_control = []
+    beam_control:list[beam_sweeping_t] = []
     for program in control_program_lst:
         start_id = program['start_id']
         end_id = program['end_id']
@@ -92,8 +92,9 @@ def create_beam_control_table(
                 raise ValueError(f"Beam ID {start_id} not found in beam table.")
             beam_control.append({
                 'id': start_id,
-                'theta': selected_beam['theta_d'],
-                'phi': selected_beam['phi_d'],
+                'dB': selected_beam['dB'],
+                'theta_d': selected_beam['theta_d'],
+                'phi_d': selected_beam['phi_d'],
                 'duration': duration
             })
 
@@ -114,8 +115,9 @@ def create_beam_control_table(
                         raise ValueError(f"Beam ID {beam_id} not found in beam table.")
                     beam_control.append({
                         'id': selected_beam['id'],
-                        'theta': selected_beam['theta_d'],
-                        'phi': selected_beam['phi_d'],
+                        'dB': selected_beam['dB'],
+                        'theta_d': selected_beam['theta_d'],
+                        'phi_d': selected_beam['phi_d'],
                         'duration': duration
                     })
 
@@ -146,8 +148,9 @@ def create_beam_control_table(
                 for random_beam in random_seq:
                     beam_control.append({
                         'id': random_beam['id'],
-                        'theta': random_beam['theta_d'],
-                        'phi': random_beam['phi_d'],
+                        'dB': random_beam['dB'],
+                        'theta_d': random_beam['theta_d'],
+                        'phi_d': random_beam['phi_d'],
                         'duration': duration
                     })
         

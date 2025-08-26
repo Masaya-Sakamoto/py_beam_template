@@ -240,7 +240,7 @@ def test_get_beam_control_program_from_json():
         'step': -1,
         'method': BeamControlMethod.CONST,
         'iters': -1,
-        'reduction': 0,
+        'reduction': False,
         'duration': 10
     }
     
@@ -253,7 +253,7 @@ def test_get_beam_control_program_from_json():
         'step': -1,
         'method': BeamControlMethod.RANDOM,
         'iters': 3,
-        'reduction': 0,
+        'reduction': False,
         'duration': 5
     }
     
@@ -281,7 +281,7 @@ def test_get_beam_control_program_from_json():
         'step': -1,
         'method': BeamControlMethod.CONST,
         'iters': -1,
-        'reduction': 0,
+        'reduction': False,
         'duration': 10
     }
     
@@ -294,7 +294,7 @@ def test_get_beam_control_program_from_json():
         'step': -1,
         'method': BeamControlMethod.RANDOM,
         'iters': 3,
-        'reduction': 0,
+        'reduction': False,
         'duration': 5
     }
     
@@ -322,7 +322,7 @@ def test_get_beam_control_program_from_json():
         'step': -1,
         'method': BeamControlMethod.CONST,
         'iters': -1,
-        'reduction': 0,
+        'reduction': False,
         'duration': 10
     }
     
@@ -335,7 +335,7 @@ def test_get_beam_control_program_from_json():
         'step': 1,
         'method': BeamControlMethod.SEQUENTIAL,
         'iters': 1,
-        'reduction': 0,
+        'reduction': False,
         'duration': 10
     }
     
@@ -348,7 +348,7 @@ def test_get_beam_control_program_from_json():
         'step': 1,
         'method': BeamControlMethod.SEQUENTIAL,
         'iters': 1,
-        'reduction': 0,
+        'reduction': False,
         'duration': 10
     }
     

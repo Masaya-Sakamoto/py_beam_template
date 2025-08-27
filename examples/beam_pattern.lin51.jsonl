@@ -1,3 +1,0 @@
-{"type": "CONST", "start_point": {"r": 0.0, "theta": 0.0}, "end_point": {"r": 0.0, "theta": 0.0}, "steps": -1}
-{"type": "LINEAR", "start_point": {"r": 0.04, "theta": 0.0}, "end_point": {"r": 1.0, "theta": 0.0}, "steps": 25}
-{"type": "LINEAR", "start_point": {"r": 0.04, "theta": 180.0}, "end_point": {"r": 1.0, "theta": 180.0}, "steps": 25}

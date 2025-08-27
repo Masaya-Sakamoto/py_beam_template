@@ -94,6 +94,7 @@ def main(
     # softmodem起動
 
     # beam controlを実行
+    input ("Press Enter to start beam control or Ctrl+C to exit...")
     sequence_ops(beam_control_table, config['xapp_beam_management_bin'])
 
     # 停止処理を書く

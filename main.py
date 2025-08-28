@@ -94,13 +94,13 @@ def main(
     # softmodem起動
 
     # beam controlを実行
-    input ("Press Enter to start beam control or Ctrl+C to exit...")
-    sequence_ops(beam_control_table, config['xapp_beam_management_bin'])
+    # input ("Press Enter to start beam control or Ctrl+C to exit...")
+    sequence_ops(beam_control_table, config['xapp_beam_management_bin_path'])
 
     # 停止処理を書く
 
 if __name__ == "__main__":
-    config = arg_parser()
+    config = arg_parser("examples/run_conf/lin_seq.conf.json")
     beam_template_lst = get_beam_template_from_json(config)
     beam_control_program_lst = get_beam_control_program_from_json(config)
     main(config, beam_template_lst, beam_control_program_lst)

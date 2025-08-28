@@ -52,14 +52,7 @@ def verify_conf(config_f: config_file_t) -> config_t:
         'random_seed': config_f['random_seed']
     }
     # xapp_beam_management_bin_path
-    config["xapp_beam_management_bin_path"] = f"\
-    {config['home_dir']}/\
-    {config['oai_dir']}/\
-    {config['flexric_dir']}/\
-    {config['flexric_build_dir']}/\
-    examples/xApp/oaibox/\
-    {config['xapp_beam_management_bin']}\
-    "
+    config["xapp_beam_management_bin_path"] = f"{config['home_dir']}/{config['oai_dir']}/{config['flexric_dir']}/{config['flexric_build_dir']}/examples/xApp/oaibox/{config['xapp_beam_management_bin']}"
     # verification logic is not implemented
     return config
         

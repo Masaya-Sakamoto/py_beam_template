@@ -100,7 +100,7 @@ def main(
     # 停止処理を書く
 
 if __name__ == "__main__":
-    config = arg_parser("examples/run_conf/lin_seq.conf.json")
+    config = arg_parser()
     beam_template_lst = get_beam_template_from_json(config)
     beam_control_program_lst = get_beam_control_program_from_json(config)
     main(config, beam_template_lst, beam_control_program_lst)
